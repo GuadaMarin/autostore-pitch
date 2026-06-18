@@ -251,8 +251,39 @@
 
   .hint { position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%); z-index: 5; color: var(--muted); font-size: 12px; opacity: .7; }
 
+  /* ---------- Layout a dos columnas (texto + imagen) ---------- */
+  .split { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: clamp(24px, 4vw, 64px); align-items: center; }
+  .split.media-left { grid-template-columns: 0.95fr 1.05fr; }
+
+  .media {
+    position: relative; margin: 0;
+    border-radius: 20px; overflow: hidden;
+    border: 1px solid var(--stroke);
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55);
+    aspect-ratio: 16 / 11; max-height: 62vh;
+    background: radial-gradient(circle at 50% 35%, #1b1f27, #0c0e13);
+  }
+  .media.light { background: #eef1f4; }
+  .media img { display: block; width: 100%; height: 100%; object-fit: contain; padding: 14px; }
+  .media .ken { animation: ken 20s ease-in-out infinite alternate; transform-origin: center; }
+  @keyframes ken { from { transform: scale(1.01); } to { transform: scale(1.09); } }
+  .media-caption { margin-top: 14px; color: var(--muted); font-size: clamp(12px, 1.1vw, 15px); font-style: italic; }
+
+  /* ---------- Animaciones de entrada (dinamismo) ---------- */
+  @keyframes rise { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+  .slide .anim { opacity: 0; }
+  .slide.active .anim { animation: rise 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+  .slide.active .d1 { animation-delay: 0.05s; }
+  .slide.active .d2 { animation-delay: 0.14s; }
+  .slide.active .d3 { animation-delay: 0.23s; }
+  .slide.active .d4 { animation-delay: 0.32s; }
+  .slide.active .d5 { animation-delay: 0.41s; }
+
   @media (max-width: 760px) {
     .grid.cols-2, .grid.cols-3, .grid.cols-4 { grid-template-columns: 1fr; }
+    .split, .split.media-left { grid-template-columns: 1fr; }
+    .split.media-left .media { order: -1; }
+    .media { max-height: 40vh; }
     .flow .arrow { transform: rotate(90deg); }
     #dots { display: none; }
   }
@@ -272,98 +303,98 @@
 
     <!-- 1 · Portada -->
     <section class="slide active">
-      <div class="eyebrow">Taller de Ingeniería de Software · Grupo 12</div>
-      <h1>Simulación <span class="accent">AutoStore</span><br />para Forus S.A.</h1>
-      <p class="lead">Un gemelo digital que abre la “caja negra” de la logística automatizada:
-      experimenta con políticas de <span class="hl">picking</span> y niveles de
-      <span class="hl">ocupación</span> sin tocar la operación real.</p>
-      <div class="cover-meta">
+      <div class="eyebrow anim d1">Forus S.A. · Grupo 12</div>
+      <h1 class="anim d2">AutoStore,<br />sin la <span class="accent">caja negra</span>.</h1>
+      <p class="lead anim d3">El gemelo digital que convierte la intuición en evidencia.</p>
+      <div class="cover-meta anim d4">
         <span class="pill">NVIDIA Omniverse</span>
-        <span class="pill">Python 3.10+</span>
-        <span class="pill">Gemelo digital</span>
+        <span class="pill">Gemelo digital 3D</span>
         <span class="pill">7 KPIs</span>
-        <span class="pill">Junio 2026</span>
       </div>
     </section>
 
-    <!-- 2 · Dolor (20 s) -->
+    <!-- 2 · Dolor -->
     <section class="slide">
-      <div class="eyebrow">01 · Dolor · 20 s</div>
-      <h2>Una mala decisión puede costar <span class="accent">millones</span> y paralizar cientos de pedidos.</h2>
-      <p class="lead">El AutoStore de Forus es increíble… pero opera como una
-      <span class="hl">"caja negra"</span>. Para probar cualquier mejora hay que experimentar
-      directamente en la planta, arriesgándose a <span class="accent">detener la operación</span>.</p>
-      <div class="stat-row">
-        <div class="stat"><div class="big">$ millones</div><div class="lbl">en juego ante<br />una mala decisión</div></div>
-        <div class="stat"><div class="big">cientos</div><div class="lbl">de pedidos que se<br />pueden paralizar</div></div>
-        <div class="stat"><div class="big">caja negra</div><div class="lbl">sin visibilidad de<br />su lógica interna</div></div>
+      <div class="eyebrow anim d1">El problema</div>
+      <div class="split">
+        <div>
+          <h2 class="anim d2">Mejorar es, hoy, una <span class="accent">apuesta</span>.</h2>
+          <p class="lead anim d3">Entra una orden. Sale un resultado.<br />
+          Lo del medio: <span class="hl">invisible</span>.</p>
+        </div>
+        <div class="anim d3">
+          <figure class="media light">
+            <img class="ken" src="assets/blackbox.png" alt="El AutoStore como caja negra: entrada, proceso oculto y salida" />
+          </figure>
+          <div class="media-caption">El sistema real no revela su lógica interna.</div>
+        </div>
       </div>
     </section>
 
-    <!-- 3 · Analgésico (20 s) -->
+    <!-- 3 · Analgésico -->
     <section class="slide">
-      <div class="eyebrow">02 · Analgésico · 20 s</div>
-      <h2>¿Cómo lo resuelven hoy? <span class="accent">A ciegas.</span></h2>
+      <div class="eyebrow anim d1">El parche de hoy</div>
+      <h2 class="anim d2">Intuición. Pruebas en vivo. <span class="accent">Dedos cruzados.</span></h2>
       <div class="grid cols-3">
-        <div class="card"><h3 class="accent">Intuición</h3><p>Confían ciegamente en la experiencia de los operadores.</p></div>
-        <div class="card"><h3 class="accent">Simulaciones manuales</h3><p>Que no reflejan la realidad de la operación.</p></div>
-        <div class="card"><h3 class="accent">Pruebas en vivo</h3><p>Cruzando los dedos para que nada falle.</p></div>
-      </div>
-      <p class="lead">El costo: pierden <span class="hl">tiempo valioso</span> y ponen en riesgo
-      las <span class="hl">entregas del día</span>.</p>
-    </section>
-
-    <!-- 4 · Solución (30 s) -->
-    <section class="slide">
-      <div class="eyebrow">03 · Solución · 30 s</div>
-      <h2>El primer simulador visual <span class="accent">3D</span> a la medida de Forus, en NVIDIA Omniverse.</h2>
-      <p class="lead">Nuestra plataforma replica con precisión el comportamiento real del AutoStore
-      y entrega un <span class="accent-2">entorno 100% independiente y seguro</span> para
-      experimentar — sin tocar una sola caja de la operación real.</p>
-      <div class="grid cols-4">
-        <div class="card"><h3>Robots</h3><p>Movimiento preciso sobre la grilla.</p></div>
-        <div class="card"><h3>Picking diurno</h3><p>Recuperación de cajas por ola de pedidos.</p></div>
-        <div class="card"><h3>Excavaciones</h3><p>Retiro de cajas superiores hasta la objetivo.</p></div>
-        <div class="card"><h3>Reposición nocturna</h3><p>Reubicación del stock y cambio de ocupación.</p></div>
+        <div class="card anim d2"><h3 class="accent">Intuición</h3><p>Se decide por experiencia, no por datos.</p></div>
+        <div class="card anim d3"><h3 class="accent">Simulación manual</h3><p>Modelos que no reflejan la realidad.</p></div>
+        <div class="card anim d4"><h3 class="accent">Prueba en producción</h3><p>Cada ensayo arriesga las entregas del día.</p></div>
       </div>
     </section>
 
-    <!-- 5 · Ambición (20 s) -->
+    <!-- 4 · Solución -->
     <section class="slide">
-      <div class="eyebrow">04 · Ambición · 20 s</div>
-      <h2>Que optimizar la bodega deje de ser <span class="accent">una apuesta</span>.</h2>
-      <p class="lead">Con este <span class="hl">gemelo digital</span> pueden correr cien estrategias
-      distintas, verlas en pantalla y comparar resultados. Sin suposiciones, sin intuición:
-      <span class="accent-2">datos concretos</span> sobre qué funciona mejor y por qué.</p>
+      <div class="eyebrow anim d1">La solución</div>
+      <div class="split media-left">
+        <div class="anim d2">
+          <figure class="media light">
+            <img class="ken" src="assets/robot.png" alt="Robot del sistema AutoStore" />
+          </figure>
+        </div>
+        <div>
+          <h2 class="anim d2">Un AutoStore que puedes <span class="accent">romper sin consecuencias</span>.</h2>
+          <p class="lead anim d3">Gemelo digital 3D en NVIDIA Omniverse,
+          <span class="accent-2">100% aislado</span> de la operación real.</p>
+          <div class="cover-meta anim d4">
+            <span class="pill">Robots</span>
+            <span class="pill">Picking diurno</span>
+            <span class="pill">Excavación</span>
+            <span class="pill">Reposición nocturna</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5 · Ambición -->
+    <section class="slide">
+      <div class="eyebrow anim d1">La ambición</div>
+      <h2 class="anim d2">Cien decisiones. <span class="accent-2">Cero riesgo</span>.</h2>
       <div class="stat-row">
-        <div class="stat"><div class="big">100</div><div class="lbl">estrategias distintas<br />que puedes ensayar</div></div>
-        <div class="stat"><div class="big">7</div><div class="lbl">KPIs comparados<br />en tiempo real</div></div>
-        <div class="stat"><div class="big">0</div><div class="lbl">riesgo sobre la<br />operación real</div></div>
+        <div class="stat anim d2"><div class="big">100</div><div class="lbl">estrategias<br />que puedes ensayar</div></div>
+        <div class="stat anim d3"><div class="big">7</div><div class="lbl">KPIs comparados<br />en tiempo real</div></div>
+        <div class="stat anim d4"><div class="big">0</div><div class="lbl">riesgo sobre la<br />operación real</div></div>
       </div>
+      <p class="lead anim d5">Comparar. Medir. Elegir — con evidencia.</p>
     </section>
 
-    <!-- 6 · Ejecución (20 s) -->
+    <!-- 6 · Ejecución -->
     <section class="slide">
-      <div class="eyebrow">05 · Ejecución · 20 s</div>
-      <h2>Usarlo es así de directo.</h2>
+      <div class="eyebrow anim d1">Así de simple</div>
+      <h2 class="anim d2">Configura · Carga · <span class="accent">Play</span>.</h2>
       <div class="grid cols-3">
-        <div class="card"><div class="num">01</div><h3>Configura la grilla</h3><p>Define las dimensiones del almacén.</p></div>
-        <div class="card"><div class="num">02</div><h3>Carga la ola</h3><p>Sube los pedidos del día en un archivo CSV.</p></div>
-        <div class="card"><div class="num">03</div><h3>Dale Play</h3><p>El simulador corre y genera un reporte comparativo.</p></div>
+        <div class="card anim d2"><div class="num">01</div><h3>Configura</h3><p>Las dimensiones de la grilla.</p></div>
+        <div class="card anim d3"><div class="num">02</div><h3>Carga</h3><p>La ola de pedidos, en CSV.</p></div>
+        <div class="card anim d4"><div class="num">03</div><h3>Play</h3><p>Y llega el reporte comparativo.</p></div>
       </div>
-      <p class="lead">Al terminar tienes un <span class="hl">reporte listo para decidir</span>.
-      Sin complicaciones y <span class="accent-2">sin necesitar saber nada técnico</span>.</p>
+      <p class="lead anim d5">Sin necesitar saber nada técnico.</p>
     </section>
 
-    <!-- 7 · Cierre (10 s) -->
+    <!-- 7 · Cierre -->
     <section class="slide">
-      <div class="eyebrow">06 · Cierre · 10 s</div>
-      <h2>La pregunta no es <em>si</em> Forus lo necesita, sino <span class="accent">cuándo</span> dan el siguiente paso.</h2>
-      <p class="lead">Cada día sin esto es un día decidiendo a ciegas y arriesgando la operación
-      para probar algo que pudo ensayarse sin costo y sin riesgo.
-      <span class="hl">Nosotros ya la construimos.</span></p>
-      <h1 style="margin-top:14px">Gracias.</h1>
-      <div class="team">
+      <div class="eyebrow anim d1">Cierre</div>
+      <h2 class="anim d2">La pregunta ya no es <em>si</em>. Es <span class="accent">cuándo</span>.</h2>
+      <h1 class="anim d3" style="margin-top:6px">Gracias.</h1>
+      <div class="team anim d4">
         <div class="member">Manuel Aguilera</div>
         <div class="member">Alex Alfaro</div>
         <div class="member">Samira Becerra Saa</div>
