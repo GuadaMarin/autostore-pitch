@@ -3,428 +3,399 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Pitch · Simulación AutoStore — Forus S.A. (Grupo 12)</title>
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<title>AutoStore · Forus S.A. — Pitch (Grupo 12)</title>
+
+<!-- Tipografías distintivas (Fontshare): Clash Display + Satoshi. Nada de Inter/Arial. -->
+<link rel="preconnect" href="https://api.fontshare.com" crossorigin />
+<link href="https://api.fontshare.com/v2/css?f[]=clash-display@600,700,500,400&f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet" />
+
 <style>
+  /* ===========================================
+     VARIABLES DE TEMA — "AutoStore Noir"
+     Cambia aquí colores/tipografía de todo el deck.
+     =========================================== */
   :root {
-    --bg: #0a0c10;
-    --ink: #f5f7fa;
-    --muted: #aeb6c2;
-    --accent: #e4002b;       /* rojo AutoStore */
-    --accent-2: #76b900;     /* verde NVIDIA */
-    --glass: rgba(20, 24, 32, 0.55);
+    --stage-bg: #08090b;
+    --slide-bg: #08090b;
+    --ink: #f4f2ee;
+    --muted: #9aa0a8;
+    --accent: #ff2e2e;        /* rojo AutoStore vivo */
+    --accent-deep: #e4002b;
+    --accent-2: #76b900;      /* verde NVIDIA, uso puntual */
+    --card: rgba(16, 18, 22, 0.52);
     --stroke: rgba(255, 255, 255, 0.12);
+
+    --font-display: "Clash Display", sans-serif;
+    --font-body: "Satoshi", sans-serif;
+
+    --ease: cubic-bezier(0.16, 1, 0.3, 1);
+    --slide-pad: 132px;
   }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
 
+  /* ===========================================
+     FIXED 16:9 STAGE — viewport-base.css (íntegro)
+     Slides autorados a 1920×1080 y escalados como bloque.
+     =========================================== */
   html, body {
-    height: 100%;
-    background: var(--bg);
-    color: var(--ink);
-    font-family: "Inter", system-ui, sans-serif;
-    overflow: hidden;
+    width: 100%; height: 100%; margin: 0;
+    overflow: hidden; background: var(--stage-bg, #000);
   }
-
-  /* ---------- Fondo de video en bucle (primeros 19 s) ---------- */
-  #bgVideoWrap {
-    position: fixed;
-    inset: 0;
-    overflow: hidden;
-    z-index: 0;
-    pointer-events: none;
+  .deck-viewport { position: fixed; inset: 0; overflow: hidden; background: var(--stage-bg, #000); }
+  .deck-stage {
+    position: absolute; left: 0; top: 0;
+    width: 1920px; height: 1080px;
+    overflow: hidden; transform-origin: 0 0;
+    background: var(--slide-bg, #fff);
   }
-  #bgVideo {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 100vw;
-    height: 56.25vw;      /* 16:9 */
-    min-height: 100vh;
-    min-width: 177.78vh;  /* 16:9 */
-  }
-  /* Imagen de respaldo: se ve siempre detrás del video (y si el embed falla). */
-  #bgPoster {
-    position: absolute;
-    inset: 0;
-    background: #000 center/cover no-repeat
-      url("https://i.ytimg.com/vi/67FhJ_u7A8Y/maxresdefault.jpg");
-    filter: saturate(1.05);
-  }
-  #overlay {
-    position: fixed;
-    inset: 0;
-    z-index: 1;
-    background:
-      radial-gradient(120% 120% at 80% 10%, rgba(228,0,43,0.18), transparent 45%),
-      radial-gradient(120% 120% at 0% 100%, rgba(118,185,0,0.14), transparent 45%),
-      linear-gradient(180deg, rgba(8,10,14,0.72), rgba(8,10,14,0.88));
-  }
-
-  /* ---------- Estructura de slides ---------- */
-  #deck { position: fixed; inset: 0; z-index: 2; }
-
   .slide {
-    position: absolute;
-    inset: 0;
-    display: none;
-    flex-direction: column;
-    justify-content: center;
-    padding: clamp(28px, 6vw, 110px);
-    opacity: 0;
-    transform: translateY(18px);
-    transition: opacity .55s ease, transform .55s ease;
+    position: absolute; inset: 0;
+    width: 1920px; height: 1080px;
+    overflow: hidden; display: block;
+    visibility: hidden; opacity: 0; pointer-events: none;
+    background: var(--slide-bg, #fff);
   }
-  .slide.active { display: flex; opacity: 1; transform: translateY(0); }
-
-  .eyebrow {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    font-family: "Space Grotesk", sans-serif;
-    font-weight: 600;
-    letter-spacing: .18em;
-    text-transform: uppercase;
-    font-size: clamp(11px, 1.1vw, 14px);
-    color: var(--accent);
-    margin-bottom: 18px;
+  .slide.active, .slide.visible { visibility: visible; opacity: 1; pointer-events: auto; z-index: 1; }
+  img, video, canvas, svg { max-width: 100%; max-height: 100%; }
+  .deck-controls { position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%); z-index: 1000; }
+  @media print {
+    html, body { width: 1920px; height: auto; overflow: visible; background: #fff; }
+    .deck-viewport { position: static; overflow: visible; background: #fff; }
+    .deck-stage { position: static; width: auto; height: auto; transform: none !important; background: none; }
+    .slide { position: relative; display: block !important; visibility: visible !important; opacity: 1 !important; pointer-events: auto !important; width: 1920px; height: 1080px; break-after: page; page-break-after: always; }
+    .slide:last-child { break-after: auto; page-break-after: auto; }
+    .deck-controls { display: none !important; }
   }
-  .eyebrow::before {
-    content: "";
-    width: 34px; height: 2px;
-    background: var(--accent);
-    display: inline-block;
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.2s !important; }
   }
 
-  h1 {
-    font-family: "Space Grotesk", sans-serif;
-    font-weight: 700;
-    font-size: clamp(36px, 7vw, 92px);
-    line-height: 1.02;
-    letter-spacing: -0.02em;
+  /* ===========================================
+     FONDO: video en bucle (primeros 19 s) + scrim + grilla
+     Vive DENTRO del stage para escalar en 16:9.
+     =========================================== */
+  .slide { background: transparent; }   /* deja ver el fondo del stage */
+  .stage-bg { position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; background: #08090b; }
+  #bgVideo {
+    position: absolute; top: 50%; left: 50%;
+    width: 1920px; height: 1080px;
+    transform: translate(-50%, -50%) scale(1.18);  /* overscan: oculta cualquier borde del player */
+    transform-origin: center;
+  }
+  #bgPoster {
+    position: absolute; inset: 0;
+    background: #08090b center/cover no-repeat url("assets/blackbox.png");
+    opacity: 0.25; filter: grayscale(0.3);
+  }
+  .bg-scrim {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(130% 120% at 82% 8%, rgba(228, 0, 43, 0.20), transparent 46%),
+      radial-gradient(120% 120% at 0% 100%, rgba(118, 185, 0, 0.10), transparent 44%),
+      linear-gradient(180deg, rgba(8, 9, 11, 0.72), rgba(8, 9, 11, 0.90));
+  }
+  .bg-grid {
+    position: absolute; inset: 0; opacity: 0.5;
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+    background-size: 96px 96px;
+    -webkit-mask-image: radial-gradient(120% 100% at 50% 50%, #000 55%, transparent 100%);
+            mask-image: radial-gradient(120% 100% at 50% 50%, #000 55%, transparent 100%);
+  }
+
+  /* ===========================================
+     CONTENIDO DE SLIDE
+     =========================================== */
+  .slide-content {
+    position: relative; z-index: 2;
+    width: 100%; height: 100%;
+    padding: var(--slide-pad);
+    display: flex; flex-direction: column; justify-content: center;
+    color: var(--ink);
+  }
+
+  .kicker {
+    display: inline-flex; align-items: center; gap: 16px;
+    font-family: var(--font-body); font-weight: 700;
+    letter-spacing: 0.32em; text-transform: uppercase;
+    font-size: 22px; color: var(--accent); margin-bottom: 30px;
+  }
+  .kicker::before { content: ""; width: 54px; height: 3px; background: var(--accent); display: inline-block; }
+
+  h1.title {
+    font-family: var(--font-display); font-weight: 700;
+    font-size: 168px; line-height: 0.94; letter-spacing: -0.02em;
   }
   h2 {
-    font-family: "Space Grotesk", sans-serif;
-    font-weight: 700;
-    font-size: clamp(28px, 4.6vw, 60px);
-    line-height: 1.06;
-    letter-spacing: -0.01em;
-    max-width: 18ch;
+    font-family: var(--font-display); font-weight: 700;
+    font-size: 104px; line-height: 1.02; letter-spacing: -0.015em;
+    max-width: 17ch;
   }
+  h2.sm { font-size: 86px; }
   .lead {
-    margin-top: 22px;
-    font-size: clamp(16px, 1.8vw, 24px);
-    color: var(--muted);
-    max-width: 60ch;
-    line-height: 1.5;
+    font-family: var(--font-body); font-weight: 400;
+    font-size: 40px; line-height: 1.42; color: var(--muted);
+    max-width: 30ch; margin-top: 34px;
   }
   .accent { color: var(--accent); }
   .accent-2 { color: var(--accent-2); }
-  .hl { color: var(--ink); font-weight: 600; }
+  .hl { color: var(--ink); font-weight: 700; }
+  em { color: var(--ink); font-style: italic; }
 
-  /* tarjetas */
-  .grid { display: grid; gap: 16px; margin-top: 34px; }
-  .grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
-  .grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
-  .grid.cols-4 { grid-template-columns: repeat(4, 1fr); }
+  /* Pills */
+  .pills { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 46px; }
+  .pill {
+    font-family: var(--font-body); font-weight: 500; font-size: 26px;
+    color: var(--muted); border: 1px solid var(--stroke);
+    background: rgba(255, 255, 255, 0.04); padding: 14px 28px; border-radius: 999px;
+  }
 
+  /* Tarjetas */
+  .cards { display: grid; gap: 28px; margin-top: 56px; }
+  .cards.c3 { grid-template-columns: repeat(3, 1fr); }
   .card {
-    background: var(--glass);
-    border: 1px solid var(--stroke);
-    border-radius: 16px;
-    padding: clamp(16px, 1.8vw, 26px);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    background: var(--card); border: 1px solid var(--stroke);
+    border-radius: 24px; padding: 44px 40px;
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
   }
-  .card .num {
-    font-family: "Space Grotesk", sans-serif;
-    font-weight: 700;
-    font-size: clamp(26px, 3vw, 40px);
-    color: var(--accent-2);
-    line-height: 1;
+  .card .idx {
+    font-family: var(--font-display); font-weight: 700; font-size: 40px;
+    color: var(--accent); line-height: 1; margin-bottom: 22px;
   }
-  .card h3 {
-    font-family: "Space Grotesk", sans-serif;
-    font-size: clamp(15px, 1.5vw, 20px);
-    margin-bottom: 6px;
-  }
-  .card p { color: var(--muted); font-size: clamp(13px, 1.2vw, 16px); line-height: 1.45; }
+  .card h3 { font-family: var(--font-display); font-weight: 600; font-size: 38px; margin-bottom: 14px; }
+  .card p { font-family: var(--font-body); font-size: 27px; line-height: 1.4; color: var(--muted); }
 
-  .kpi .num { color: var(--accent); }
-
-  ul.clean { list-style: none; margin-top: 26px; display: grid; gap: 14px; max-width: 70ch; }
-  ul.clean li {
-    position: relative;
-    padding-left: 30px;
-    font-size: clamp(15px, 1.6vw, 21px);
-    color: var(--ink);
-    line-height: 1.4;
-  }
-  ul.clean li span { color: var(--muted); }
-  ul.clean li::before {
-    content: "";
-    position: absolute; left: 0; top: .55em;
-    width: 12px; height: 12px;
-    border-radius: 3px;
-    background: var(--accent);
-    box-shadow: 0 0 0 4px rgba(228,0,43,0.15);
-  }
-
-  .stat-row { display: flex; flex-wrap: wrap; gap: clamp(24px, 5vw, 80px); margin-top: 40px; }
+  /* Stats grandes */
+  .stats { display: flex; gap: 110px; margin-top: 64px; }
   .stat .big {
-    font-family: "Space Grotesk", sans-serif;
-    font-weight: 700;
-    font-size: clamp(38px, 6vw, 78px);
-    line-height: 1;
-    background: linear-gradient(180deg, #fff, #9aa3b2);
+    font-family: var(--font-display); font-weight: 700; font-size: 168px; line-height: 0.9;
+    background: linear-gradient(180deg, #fff, #b9bec6);
     -webkit-background-clip: text; background-clip: text; color: transparent;
   }
-  .stat .lbl { color: var(--muted); margin-top: 8px; font-size: clamp(13px, 1.2vw, 17px); }
+  .stat .big.red { background: linear-gradient(180deg, #ff6a6a, var(--accent-deep)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .stat .lbl { font-family: var(--font-body); font-size: 28px; color: var(--muted); margin-top: 14px; line-height: 1.32; }
 
-  .pill {
-    display: inline-block;
+  /* Layout dos columnas (texto + imagen) */
+  .split { display: grid; grid-template-columns: 1.02fr 0.98fr; gap: 96px; align-items: center; height: 100%; }
+  .split.media-left { grid-template-columns: 0.98fr 1.02fr; }
+  .figure {
+    position: relative; border-radius: 26px; overflow: hidden;
     border: 1px solid var(--stroke);
-    background: rgba(255,255,255,0.05);
-    padding: 7px 14px; border-radius: 999px;
-    font-size: clamp(12px, 1.1vw, 15px);
-    color: var(--muted);
-    margin: 6px 8px 0 0;
+    box-shadow: 0 50px 120px rgba(0, 0, 0, 0.6);
+    aspect-ratio: 16 / 11; background: #eef1f4;
+  }
+  .figure img { width: 100%; height: 100%; object-fit: contain; padding: 22px; }
+  .figure .ken { animation: ken 22s var(--ease) infinite alternate; transform-origin: center; }
+  @keyframes ken { from { transform: scale(1.02); } to { transform: scale(1.12); } }
+  .cap { font-family: var(--font-body); font-style: italic; font-size: 26px; color: var(--muted); margin-top: 22px; }
+
+  /* Equipo */
+  .team { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 44px; max-width: 1180px; }
+  .member {
+    font-family: var(--font-body); font-weight: 500; font-size: 28px;
+    background: var(--card); border: 1px solid var(--stroke);
+    border-radius: 14px; padding: 16px 26px;
   }
 
-  .team { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; max-width: 70ch; }
-  .team .member {
-    background: var(--glass);
-    border: 1px solid var(--stroke);
-    border-radius: 12px;
-    padding: 12px 18px;
-    font-weight: 500;
-    font-size: clamp(14px, 1.3vw, 18px);
+  /* ===========================================
+     ANIMACIONES DE ENTRADA (reveal escalonado)
+     =========================================== */
+  .reveal { opacity: 0; transform: translateY(38px); transition: opacity 0.75s var(--ease), transform 0.75s var(--ease); }
+  .slide.visible .reveal { opacity: 1; transform: none; }
+  .reveal.blur { filter: blur(12px); transition: opacity 0.8s var(--ease), transform 0.8s var(--ease), filter 0.8s var(--ease); }
+  .slide.visible .reveal.blur { filter: blur(0); }
+  .slide.visible .r1 { transition-delay: 0.06s; }
+  .slide.visible .r2 { transition-delay: 0.16s; }
+  .slide.visible .r3 { transition-delay: 0.26s; }
+  .slide.visible .r4 { transition-delay: 0.36s; }
+  .slide.visible .r5 { transition-delay: 0.46s; }
+  .slide.visible .r6 { transition-delay: 0.56s; }
+
+  /* ===========================================
+     CHROME (fuera del stage, no escala)
+     =========================================== */
+  #progress { position: fixed; top: 0; left: 0; height: 4px; z-index: 1000; width: 0;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2)); transition: width 0.5s var(--ease); }
+  .hud { position: fixed; z-index: 1000; font-family: var(--font-display); color: var(--ink); }
+  #brand { left: 40px; bottom: 30px; font-weight: 700; letter-spacing: 0.06em; opacity: 0.9; font-size: 18px; }
+  #brand .d { color: var(--accent); }
+  #counter { right: 40px; bottom: 32px; color: var(--muted); font-size: 18px; font-variant-numeric: tabular-nums; }
+  .nav { right: 40px; bottom: 64px; display: flex; gap: 12px; }
+  .nav button {
+    width: 52px; height: 52px; border-radius: 50%; border: 1px solid var(--stroke);
+    background: rgba(16, 18, 22, 0.6); color: var(--ink); cursor: pointer; font-size: 22px;
+    backdrop-filter: blur(8px); transition: background 0.2s, transform 0.1s;
   }
+  .nav button:hover { background: rgba(228, 0, 43, 0.3); }
+  .nav button:active { transform: scale(0.93); }
+  #dots { position: fixed; right: 26px; top: 50%; transform: translateY(-50%); z-index: 1000; display: flex; flex-direction: column; gap: 12px; }
+  #dots button { width: 10px; height: 10px; border-radius: 50%; border: none; background: rgba(255, 255, 255, 0.25); cursor: pointer; padding: 0; transition: all 0.25s; }
+  #dots button.on { background: var(--accent); transform: scale(1.6); }
 
-  .cover-meta { margin-top: 40px; display: flex; flex-wrap: wrap; gap: 10px; }
-
-  /* flujo arquitectura */
-  .flow { display: flex; align-items: stretch; gap: 14px; margin-top: 34px; flex-wrap: wrap; }
-  .flow .node { flex: 1 1 200px; }
-  .flow .arrow { display: flex; align-items: center; color: var(--accent); font-size: 28px; }
-  .bus {
-    margin-top: 16px; text-align: center; padding: 14px;
-    border: 1px dashed rgba(118,185,0,0.5);
-    border-radius: 14px; color: var(--accent-2);
-    font-family: "Space Grotesk", sans-serif; font-weight: 600;
-    background: rgba(118,185,0,0.06);
+  /* Edición inline */
+  .edit-hotzone { position: fixed; top: 0; left: 0; width: 80px; height: 80px; z-index: 10000; cursor: pointer; }
+  .edit-toggle {
+    position: fixed; top: 18px; left: 18px; z-index: 10001;
+    width: 46px; height: 46px; border-radius: 12px; border: 1px solid var(--stroke);
+    background: rgba(16, 18, 22, 0.85); color: var(--ink); font-size: 18px; cursor: pointer;
+    opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
   }
-
-  /* ---------- HUD: progreso, contador, navegación ---------- */
-  #progress {
-    position: fixed; top: 0; left: 0; height: 3px;
-    background: linear-gradient(90deg, var(--accent), var(--accent-2));
-    z-index: 5; width: 0; transition: width .4s ease;
-  }
-  #hud {
-    position: fixed; bottom: 22px; left: 0; right: 0;
-    z-index: 5; display: flex; align-items: center; justify-content: space-between;
-    padding: 0 clamp(20px, 5vw, 70px);
-    pointer-events: none;
-    font-family: "Space Grotesk", sans-serif;
-  }
-  #brand { font-weight: 700; letter-spacing: .04em; color: var(--ink); opacity: .9; }
-  #brand .dot { color: var(--accent); }
-  #counter { color: var(--muted); font-variant-numeric: tabular-nums; }
-  .nav-btns { pointer-events: auto; display: flex; gap: 10px; }
-  .nav-btns button {
-    width: 42px; height: 42px; border-radius: 50%;
-    border: 1px solid var(--stroke);
-    background: var(--glass); color: var(--ink);
-    cursor: pointer; font-size: 18px;
-    backdrop-filter: blur(6px); transition: background .2s, transform .1s;
-  }
-  .nav-btns button:hover { background: rgba(228,0,43,0.25); }
-  .nav-btns button:active { transform: scale(.94); }
-
-  #dots { position: fixed; right: 18px; top: 50%; transform: translateY(-50%); z-index: 5; display: flex; flex-direction: column; gap: 10px; }
-  #dots button { width: 9px; height: 9px; border-radius: 50%; border: none; background: rgba(255,255,255,0.25); cursor: pointer; padding: 0; transition: all .25s; }
-  #dots button.on { background: var(--accent); transform: scale(1.5); }
-
-  .hint { position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%); z-index: 5; color: var(--muted); font-size: 12px; opacity: .7; }
-
-  /* ---------- Layout a dos columnas (texto + imagen) ---------- */
-  .split { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: clamp(24px, 4vw, 64px); align-items: center; }
-  .split.media-left { grid-template-columns: 0.95fr 1.05fr; }
-
-  .media {
-    position: relative; margin: 0;
-    border-radius: 20px; overflow: hidden;
-    border: 1px solid var(--stroke);
-    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55);
-    aspect-ratio: 16 / 11; max-height: 62vh;
-    background: radial-gradient(circle at 50% 35%, #1b1f27, #0c0e13);
-  }
-  .media.light { background: #eef1f4; }
-  .media img { display: block; width: 100%; height: 100%; object-fit: contain; padding: 14px; }
-  .media .ken { animation: ken 20s ease-in-out infinite alternate; transform-origin: center; }
-  @keyframes ken { from { transform: scale(1.01); } to { transform: scale(1.09); } }
-  .media-caption { margin-top: 14px; color: var(--muted); font-size: clamp(12px, 1.1vw, 15px); font-style: italic; }
-
-  /* ---------- Animaciones de entrada (dinamismo) ---------- */
-  @keyframes rise { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
-  .slide .anim { opacity: 0; }
-  .slide.active .anim { animation: rise 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
-  .slide.active .d1 { animation-delay: 0.05s; }
-  .slide.active .d2 { animation-delay: 0.14s; }
-  .slide.active .d3 { animation-delay: 0.23s; }
-  .slide.active .d4 { animation-delay: 0.32s; }
-  .slide.active .d5 { animation-delay: 0.41s; }
-
-  @media (max-width: 760px) {
-    .grid.cols-2, .grid.cols-3, .grid.cols-4 { grid-template-columns: 1fr; }
-    .split, .split.media-left { grid-template-columns: 1fr; }
-    .split.media-left .media { order: -1; }
-    .media { max-height: 40vh; }
-    .flow .arrow { transform: rotate(90deg); }
-    #dots { display: none; }
-  }
+  .edit-toggle.show, .edit-toggle.active { opacity: 1; pointer-events: auto; }
+  .edit-toggle.active { background: var(--accent-deep); }
+  body.editing [contenteditable="true"] { outline: 2px dashed rgba(255, 46, 46, 0.6); outline-offset: 6px; border-radius: 6px; }
+  #editHint { position: fixed; top: 20px; left: 78px; z-index: 10001; font-family: var(--font-body); font-size: 14px;
+    color: var(--ink); background: rgba(16,18,22,.85); border: 1px solid var(--stroke); padding: 8px 14px; border-radius: 10px;
+    opacity: 0; pointer-events: none; transition: opacity .3s; }
+  #editHint.show { opacity: 1; }
 </style>
 </head>
 <body>
-  <!-- Fondo de video en bucle (primeros 19 segundos) -->
-  <div id="bgVideoWrap">
-    <div id="bgPoster"></div>
-    <div id="bgVideo"></div>
-  </div>
-  <div id="overlay"></div>
+  <div class="deck-viewport">
+    <main class="deck-stage" id="deckStage">
 
-  <div id="progress"></div>
-
-  <main id="deck">
-
-    <!-- 1 · Portada -->
-    <section class="slide active">
-      <div class="eyebrow anim d1">Forus S.A. · Grupo 12</div>
-      <h1 class="anim d2">AutoStore,<br />sin la <span class="accent">caja negra</span>.</h1>
-      <p class="lead anim d3">El gemelo digital que convierte la intuición en evidencia.</p>
-      <div class="cover-meta anim d4">
-        <span class="pill">NVIDIA Omniverse</span>
-        <span class="pill">Gemelo digital 3D</span>
-        <span class="pill">7 KPIs</span>
+      <!-- Fondo persistente (video + scrim + grilla) -->
+      <div class="stage-bg">
+        <div id="bgPoster"></div>
+        <div id="bgVideo"></div>
+        <div class="bg-scrim"></div>
+        <div class="bg-grid"></div>
       </div>
-    </section>
 
-    <!-- 2 · Dolor -->
-    <section class="slide">
-      <div class="eyebrow anim d1">El problema</div>
-      <div class="split">
-        <div>
-          <h2 class="anim d2">Mejorar es, hoy, una <span class="accent">apuesta</span>.</h2>
-          <p class="lead anim d3">Entra una orden. Sale un resultado.<br />
-          Lo del medio: <span class="hl">invisible</span>.</p>
-        </div>
-        <div class="anim d3">
-          <figure class="media light">
-            <img class="ken" src="assets/blackbox.png" alt="El AutoStore como caja negra: entrada, proceso oculto y salida" />
-          </figure>
-          <div class="media-caption">El sistema real no revela su lógica interna.</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 3 · Analgésico -->
-    <section class="slide">
-      <div class="eyebrow anim d1">El parche de hoy</div>
-      <h2 class="anim d2">Intuición. Pruebas en vivo. <span class="accent">Dedos cruzados.</span></h2>
-      <div class="grid cols-3">
-        <div class="card anim d2"><h3 class="accent">Intuición</h3><p>Se decide por experiencia, no por datos.</p></div>
-        <div class="card anim d3"><h3 class="accent">Simulación manual</h3><p>Modelos que no reflejan la realidad.</p></div>
-        <div class="card anim d4"><h3 class="accent">Prueba en producción</h3><p>Cada ensayo arriesga las entregas del día.</p></div>
-      </div>
-    </section>
-
-    <!-- 4 · Solución -->
-    <section class="slide">
-      <div class="eyebrow anim d1">La solución</div>
-      <div class="split media-left">
-        <div class="anim d2">
-          <figure class="media light">
-            <img class="ken" src="assets/robot.png" alt="Robot del sistema AutoStore" />
-          </figure>
-        </div>
-        <div>
-          <h2 class="anim d2">Un AutoStore que puedes <span class="accent">romper sin consecuencias</span>.</h2>
-          <p class="lead anim d3">Gemelo digital 3D en NVIDIA Omniverse,
-          <span class="accent-2">100% aislado</span> de la operación real.</p>
-          <div class="cover-meta anim d4">
-            <span class="pill">Robots</span>
-            <span class="pill">Picking diurno</span>
-            <span class="pill">Excavación</span>
-            <span class="pill">Reposición nocturna</span>
+      <!-- 1 · PORTADA -->
+      <section class="slide title-slide active visible">
+        <div class="slide-content">
+          <div class="kicker reveal r1" contenteditable="false">Forus S.A. · Grupo 12</div>
+          <h1 class="title reveal blur r2">AutoStore,<br />sin la <span class="accent">caja negra</span>.</h1>
+          <p class="lead reveal r3" style="max-width:34ch">El gemelo digital que convierte la intuición en evidencia.</p>
+          <div class="pills reveal r4">
+            <span class="pill">NVIDIA Omniverse</span>
+            <span class="pill">Gemelo digital 3D</span>
+            <span class="pill">7 KPIs</span>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- 5 · Ambición -->
-    <section class="slide">
-      <div class="eyebrow anim d1">La ambición</div>
-      <h2 class="anim d2">Cien decisiones. <span class="accent-2">Cero riesgo</span>.</h2>
-      <div class="stat-row">
-        <div class="stat anim d2"><div class="big">100</div><div class="lbl">estrategias<br />que puedes ensayar</div></div>
-        <div class="stat anim d3"><div class="big">7</div><div class="lbl">KPIs comparados<br />en tiempo real</div></div>
-        <div class="stat anim d4"><div class="big">0</div><div class="lbl">riesgo sobre la<br />operación real</div></div>
-      </div>
-      <p class="lead anim d5">Comparar. Medir. Elegir — con evidencia.</p>
-    </section>
+      <!-- 2 · PROBLEMA -->
+      <section class="slide">
+        <div class="slide-content">
+          <div class="split">
+            <div>
+              <div class="kicker reveal r1">El problema</div>
+              <h2 class="reveal r2">Mejorar es, hoy, una <span class="accent">apuesta</span>.</h2>
+              <p class="lead reveal r3">Entra una orden. Sale un resultado.<br />Lo del medio: <span class="hl">invisible</span>.</p>
+            </div>
+            <div class="reveal r3">
+              <figure class="figure"><img class="ken" src="assets/blackbox.png" alt="El AutoStore como caja negra: entrada, proceso oculto y salida" /></figure>
+              <div class="cap">El sistema real no revela su lógica interna.</div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-    <!-- 6 · Ejecución -->
-    <section class="slide">
-      <div class="eyebrow anim d1">Así de simple</div>
-      <h2 class="anim d2">Configura · Carga · <span class="accent">Play</span>.</h2>
-      <div class="grid cols-3">
-        <div class="card anim d2"><div class="num">01</div><h3>Configura</h3><p>Las dimensiones de la grilla.</p></div>
-        <div class="card anim d3"><div class="num">02</div><h3>Carga</h3><p>La ola de pedidos, en CSV.</p></div>
-        <div class="card anim d4"><div class="num">03</div><h3>Play</h3><p>Y llega el reporte comparativo.</p></div>
-      </div>
-      <p class="lead anim d5">Sin necesitar saber nada técnico.</p>
-    </section>
+      <!-- 3 · EL PARCHE DE HOY -->
+      <section class="slide">
+        <div class="slide-content">
+          <div class="kicker reveal r1">El parche de hoy</div>
+          <h2 class="sm reveal r2">Intuición. Pruebas en vivo. <span class="accent">Dedos cruzados.</span></h2>
+          <div class="cards c3">
+            <div class="card reveal r2"><div class="idx">01</div><h3>Intuición</h3><p>Se decide por experiencia, no por datos.</p></div>
+            <div class="card reveal r3"><div class="idx">02</div><h3>Simulación manual</h3><p>Modelos que no reflejan la realidad.</p></div>
+            <div class="card reveal r4"><div class="idx">03</div><h3>Prueba en producción</h3><p>Cada ensayo arriesga las entregas del día.</p></div>
+          </div>
+        </div>
+      </section>
 
-    <!-- 7 · Cierre -->
-    <section class="slide">
-      <div class="eyebrow anim d1">Cierre</div>
-      <h2 class="anim d2">La pregunta ya no es <em>si</em>. Es <span class="accent">cuándo</span>.</h2>
-      <h1 class="anim d3" style="margin-top:6px">Gracias.</h1>
-      <div class="team anim d4">
-        <div class="member">Manuel Aguilera</div>
-        <div class="member">Alex Alfaro</div>
-        <div class="member">Samira Becerra Saa</div>
-        <div class="member">Alonso Bravo</div>
-        <div class="member">Eliseo Guarda</div>
-        <div class="member">Guadalupe Marín</div>
-        <div class="member">Vicente Rosales</div>
-        <div class="member">Martín Vasquez</div>
-      </div>
-    </section>
+      <!-- 4 · SOLUCIÓN -->
+      <section class="slide">
+        <div class="slide-content">
+          <div class="split media-left">
+            <div class="reveal r2"><figure class="figure"><img class="ken" src="assets/robot.png" alt="Robot del sistema AutoStore" /></figure></div>
+            <div>
+              <div class="kicker reveal r1">La solución</div>
+              <h2 class="sm reveal r2">Un AutoStore que puedes <span class="accent">romper sin consecuencias</span>.</h2>
+              <p class="lead reveal r3">Gemelo digital 3D en NVIDIA Omniverse, <span class="accent-2">100% aislado</span> de la operación real.</p>
+              <div class="pills reveal r4">
+                <span class="pill">Robots</span><span class="pill">Picking diurno</span>
+                <span class="pill">Excavación</span><span class="pill">Reposición nocturna</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-  </main>
+      <!-- 5 · AMBICIÓN -->
+      <section class="slide">
+        <div class="slide-content">
+          <div class="kicker reveal r1">La ambición</div>
+          <h2 class="reveal r2">Cien decisiones. <span class="accent-2">Cero riesgo</span>.</h2>
+          <div class="stats">
+            <div class="stat reveal r2"><div class="big red">100</div><div class="lbl">estrategias<br />que puedes ensayar</div></div>
+            <div class="stat reveal r3"><div class="big">7</div><div class="lbl">KPIs comparados<br />en tiempo real</div></div>
+            <div class="stat reveal r4"><div class="big">0</div><div class="lbl">riesgo sobre la<br />operación real</div></div>
+          </div>
+          <p class="lead reveal r5" style="max-width:40ch">Comparar. Medir. Elegir — con evidencia.</p>
+        </div>
+      </section>
 
-  <!-- HUD -->
-  <div id="hud">
-    <div id="brand">AUTOSTORE<span class="dot">·</span>FORUS</div>
-    <div class="nav-btns">
-      <button id="prev" aria-label="Anterior">‹</button>
-      <button id="next" aria-label="Siguiente">›</button>
-    </div>
-    <div id="counter">01 / 07</div>
+      <!-- 6 · EJECUCIÓN -->
+      <section class="slide">
+        <div class="slide-content">
+          <div class="kicker reveal r1">Así de simple</div>
+          <h2 class="reveal r2">Configura · Carga · <span class="accent">Play</span>.</h2>
+          <div class="cards c3">
+            <div class="card reveal r2"><div class="idx">01</div><h3>Configura</h3><p>Las dimensiones de la grilla.</p></div>
+            <div class="card reveal r3"><div class="idx">02</div><h3>Carga</h3><p>La ola de pedidos, en CSV.</p></div>
+            <div class="card reveal r4"><div class="idx">03</div><h3>Play</h3><p>Y llega el reporte comparativo.</p></div>
+          </div>
+          <p class="lead reveal r5" style="max-width:40ch">Sin necesitar saber nada técnico.</p>
+        </div>
+      </section>
+
+      <!-- 7 · CIERRE -->
+      <section class="slide">
+        <div class="slide-content">
+          <div class="kicker reveal r1">Cierre</div>
+          <h2 class="reveal blur r2">La pregunta ya no es <em>si</em>.<br />Es <span class="accent">cuándo</span>.</h2>
+          <h1 class="title reveal r3" style="font-size:120px;margin-top:10px">Gracias.</h1>
+          <div class="team reveal r4">
+            <div class="member">Manuel Aguilera</div>
+            <div class="member">Alex Alfaro</div>
+            <div class="member">Samira Becerra Saa</div>
+            <div class="member">Alonso Bravo</div>
+            <div class="member">Eliseo Guarda</div>
+            <div class="member">Guadalupe Marín</div>
+            <div class="member">Vicente Rosales</div>
+            <div class="member">Martín Vasquez</div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Chrome -->
+  <div id="progress"></div>
+  <div class="hud" id="brand">AUTOSTORE<span class="d">·</span>FORUS</div>
+  <div class="hud" id="counter">01 / 07</div>
+  <div class="hud nav">
+    <button id="prev" aria-label="Anterior">‹</button>
+    <button id="next" aria-label="Siguiente">›</button>
   </div>
   <div id="dots"></div>
+
+  <!-- Edición inline -->
+  <div class="edit-hotzone"></div>
+  <button class="edit-toggle" id="editToggle" title="Modo edición (E)">✏️</button>
+  <div id="editHint">Modo edición: haz clic en cualquier texto. Ctrl+S para descargar.</div>
 
   <!-- API de YouTube para el fondo en bucle -->
   <script src="https://www.youtube.com/iframe_api"></script>
   <script>
-    /* ====================== Fondo de video en bucle ====================== */
+    /* === FONDO DE VIDEO EN BUCLE (primeros 19 s) === */
     const VIDEO_ID = "67FhJ_u7A8Y";
-    const LOOP_END = 19;        // segundos: se reinicia al llegar a este punto
+    const LOOP_END = 19;
     let bgPlayer = null;
 
     function onYouTubeIframeAPIReady() {
@@ -432,109 +403,145 @@
         videoId: VIDEO_ID,
         host: "https://www.youtube.com",
         playerVars: {
-          autoplay: 1, controls: 0, mute: 1,
-          start: 0, end: LOOP_END,
-          loop: 1, playlist: VIDEO_ID,
-          modestbranding: 1, playsinline: 1,
-          rel: 0, fs: 0, disablekb: 1, iv_load_policy: 3,
-          origin: location.origin
+          autoplay: 1, controls: 0, mute: 1, start: 0, end: LOOP_END,
+          loop: 1, playlist: VIDEO_ID, modestbranding: 1, playsinline: 1,
+          rel: 0, fs: 0, disablekb: 1, iv_load_policy: 3, origin: location.origin
         },
         events: {
           onReady: (e) => {
-            e.target.mute();
-            e.target.playVideo();
-            // Reinicio robusto del segmento (no dependemos solo de end/loop).
+            e.target.mute(); e.target.playVideo();
             setInterval(() => {
-              try {
-                const t = bgPlayer.getCurrentTime ? bgPlayer.getCurrentTime() : 0;
-                if (t >= LOOP_END) { bgPlayer.seekTo(0, true); bgPlayer.playVideo(); }
-              } catch (_) {}
+              try { if (bgPlayer.getCurrentTime && bgPlayer.getCurrentTime() >= LOOP_END) { bgPlayer.seekTo(0, true); bgPlayer.playVideo(); } } catch (_) {}
             }, 200);
           },
-          onStateChange: (e) => {
-            if (e.data === YT.PlayerState.ENDED) {
-              e.target.seekTo(0, true);
-              e.target.playVideo();
-            }
-          },
-          onError: () => {
-            // Si el embed falla, queda visible la imagen de respaldo (#bgPoster).
-            const f = document.getElementById("bgVideo");
-            if (f) f.style.display = "none";
-          }
+          onStateChange: (e) => { if (e.data === YT.PlayerState.ENDED) { e.target.seekTo(0, true); e.target.playVideo(); } },
+          onError: () => { const f = document.getElementById("bgVideo"); if (f) f.style.display = "none"; }
         }
       });
     }
-
-    // Aviso si se abre como archivo local (file://): el embed de YouTube se
-    // bloquea por origen nulo. Se debe servir por http://localhost.
     if (location.protocol === "file:") {
       window.addEventListener("DOMContentLoaded", () => {
         const w = document.createElement("div");
-        w.style.cssText = "position:fixed;z-index:9;left:50%;top:14px;transform:translateX(-50%);" +
-          "background:rgba(228,0,43,.92);color:#fff;padding:8px 16px;border-radius:999px;" +
-          "font:600 13px/1 Inter,sans-serif;box-shadow:0 6px 24px rgba(0,0,0,.4)";
-        w.textContent = "Para ver el video, abre la presentación vía servidor local (ver README).";
-        document.body.appendChild(w);
-        setTimeout(() => w.remove(), 8000);
+        w.style.cssText = "position:fixed;z-index:99;left:50%;top:14px;transform:translateX(-50%);background:rgba(228,0,43,.92);color:#fff;padding:8px 16px;border-radius:999px;font:600 13px/1 sans-serif";
+        w.textContent = "Para ver el video, sirve la página por http://localhost o GitHub Pages.";
+        document.body.appendChild(w); setTimeout(() => w.remove(), 8000);
       });
     }
 
-    /* ====================== Navegación de slides ====================== */
-    const slides = Array.from(document.querySelectorAll(".slide"));
-    const total = slides.length;
-    let current = 0;
-
-    const counter = document.getElementById("counter");
-    const progress = document.getElementById("progress");
-    const dotsWrap = document.getElementById("dots");
-
-    slides.forEach((_, i) => {
-      const b = document.createElement("button");
-      b.setAttribute("aria-label", "Ir a la slide " + (i + 1));
-      b.addEventListener("click", () => go(i));
-      dotsWrap.appendChild(b);
-    });
-    const dots = Array.from(dotsWrap.children);
-
-    function pad(n) { return String(n).padStart(2, "0"); }
-
-    function render() {
-      slides.forEach((s, i) => s.classList.toggle("active", i === current));
-      dots.forEach((d, i) => d.classList.toggle("on", i === current));
-      counter.textContent = pad(current + 1) + " / " + pad(total);
-      progress.style.width = ((current + 1) / total * 100) + "%";
+    /* === CONTROLADOR DE PRESENTACIÓN (stage fijo 16:9) === */
+    class SlidePresentation {
+      constructor() {
+        this.slides = Array.from(document.querySelectorAll(".slide"));
+        this.total = this.slides.length;
+        this.current = 0;
+        this.stage = document.getElementById("deckStage");
+        this.counter = document.getElementById("counter");
+        this.progress = document.getElementById("progress");
+        this._buildDots();
+        this._scale(); window.addEventListener("resize", () => this._scale());
+        this._keyboard(); this._touch(); this._wheel();
+        document.getElementById("next").addEventListener("click", () => this.next());
+        document.getElementById("prev").addEventListener("click", () => this.prev());
+        this.show(0);
+      }
+      _scale() {
+        const f = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+        const x = (window.innerWidth - 1920 * f) / 2;
+        const y = (window.innerHeight - 1080 * f) / 2;
+        this.stage.style.transform = `translate(${x}px, ${y}px) scale(${f})`;
+      }
+      _buildDots() {
+        this.dotsWrap = document.getElementById("dots");
+        this.dots = this.slides.map((_, i) => {
+          const b = document.createElement("button");
+          b.setAttribute("aria-label", "Ir a la slide " + (i + 1));
+          b.addEventListener("click", () => this.show(i));
+          this.dotsWrap.appendChild(b); return b;
+        });
+      }
+      _pad(n) { return String(n).padStart(2, "0"); }
+      show(i) {
+        this.current = Math.max(0, Math.min(this.total - 1, i));
+        this.slides.forEach((s, k) => { const on = k === this.current; s.classList.toggle("active", on); s.classList.toggle("visible", on); });
+        this.dots.forEach((d, k) => d.classList.toggle("on", k === this.current));
+        this.counter.textContent = this._pad(this.current + 1) + " / " + this._pad(this.total);
+        this.progress.style.width = ((this.current + 1) / this.total * 100) + "%";
+      }
+      next() { this.show(this.current + 1); }
+      prev() { this.show(this.current - 1); }
+      _keyboard() {
+        document.addEventListener("keydown", (e) => {
+          if (e.target.getAttribute && e.target.getAttribute("contenteditable") === "true") return;
+          if (["ArrowRight", "PageDown", " "].includes(e.key)) { e.preventDefault(); this.next(); }
+          else if (["ArrowLeft", "PageUp"].includes(e.key)) { e.preventDefault(); this.prev(); }
+          else if (e.key === "Home") this.show(0);
+          else if (e.key === "End") this.show(this.total - 1);
+          else if (e.key === "f" || e.key === "F") { if (!document.fullscreenElement) document.documentElement.requestFullscreen(); else document.exitFullscreen(); }
+        });
+      }
+      _touch() {
+        let x = null;
+        document.addEventListener("touchstart", (e) => { x = e.changedTouches[0].clientX; }, { passive: true });
+        document.addEventListener("touchend", (e) => { if (x === null) return; const dx = e.changedTouches[0].clientX - x; if (Math.abs(dx) > 50) (dx < 0 ? this.next() : this.prev()); x = null; }, { passive: true });
+      }
+      _wheel() {
+        let lock = false;
+        window.addEventListener("wheel", (e) => {
+          if (document.body.classList.contains("editing")) return;
+          if (lock) return; if (Math.abs(e.deltaY) < 24) return;
+          lock = true; (e.deltaY > 0 ? this.next() : this.prev());
+          setTimeout(() => { lock = false; }, 700);
+        }, { passive: true });
+      }
     }
+    const deck = new SlidePresentation();
 
-    function go(i) { current = Math.max(0, Math.min(total - 1, i)); render(); }
-    function next() { go(current + 1); }
-    function prev() { go(current - 1); }
-
-    document.getElementById("next").addEventListener("click", next);
-    document.getElementById("prev").addEventListener("click", prev);
-
+    /* === EDICIÓN INLINE (E o esquina superior izq.; Ctrl+S descarga) === */
+    const editor = {
+      isActive: false,
+      editable: "h1, h2, p.lead, .card h3, .card p, .stat .lbl, .member, .pill, .cap, .kicker",
+      restore() {
+        try { const saved = JSON.parse(localStorage.getItem("autostore-pitch-edits") || "{}");
+          document.querySelectorAll(this.editable).forEach((el, i) => { if (saved[i] != null) el.innerHTML = saved[i]; });
+        } catch (_) {}
+      },
+      save() {
+        const map = {}; document.querySelectorAll(this.editable).forEach((el, i) => { map[i] = el.innerHTML; });
+        localStorage.setItem("autostore-pitch-edits", JSON.stringify(map));
+      },
+      toggle() {
+        this.isActive = !this.isActive;
+        document.body.classList.toggle("editing", this.isActive);
+        document.getElementById("editToggle").classList.toggle("active", this.isActive);
+        document.getElementById("editHint").classList.toggle("show", this.isActive);
+        document.querySelectorAll(this.editable).forEach((el) => {
+          el.setAttribute("contenteditable", this.isActive ? "true" : "false");
+          if (this.isActive) el.addEventListener("input", this._onInput);
+        });
+      },
+      _onInput: () => editor.save()
+    };
+    editor.restore();
+    const hot = document.querySelector(".edit-hotzone");
+    const tgl = document.getElementById("editToggle");
+    let hide = null;
+    hot.addEventListener("mouseenter", () => { clearTimeout(hide); tgl.classList.add("show"); });
+    hot.addEventListener("mouseleave", () => { hide = setTimeout(() => { if (!editor.isActive) tgl.classList.remove("show"); }, 400); });
+    tgl.addEventListener("mouseenter", () => clearTimeout(hide));
+    tgl.addEventListener("mouseleave", () => { hide = setTimeout(() => { if (!editor.isActive) tgl.classList.remove("show"); }, 400); });
+    tgl.addEventListener("click", () => editor.toggle());
+    hot.addEventListener("click", () => editor.toggle());
     document.addEventListener("keydown", (e) => {
-      if (["ArrowRight", "PageDown", " "].includes(e.key)) { e.preventDefault(); next(); }
-      else if (["ArrowLeft", "PageUp"].includes(e.key)) { e.preventDefault(); prev(); }
-      else if (e.key === "Home") go(0);
-      else if (e.key === "End") go(total - 1);
-      else if (e.key === "f" || e.key === "F") {
-        if (!document.fullscreenElement) document.documentElement.requestFullscreen();
-        else document.exitFullscreen();
+      if ((e.key === "e" || e.key === "E") && (!e.target.getAttribute || e.target.getAttribute("contenteditable") !== "true")) editor.toggle();
+      if ((e.ctrlKey || e.metaKey) && e.key === "s") {
+        e.preventDefault();
+        document.querySelectorAll('[contenteditable]').forEach((el) => el.setAttribute("contenteditable", "false"));
+        const html = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+        const blob = new Blob([html], { type: "text/html" });
+        const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "autostore-pitch.html"; a.click();
+        if (editor.isActive) document.querySelectorAll(editor.editable).forEach((el) => el.setAttribute("contenteditable", "true"));
       }
     });
-
-    // Soporte táctil (deslizar).
-    let touchX = null;
-    document.addEventListener("touchstart", (e) => { touchX = e.changedTouches[0].clientX; }, { passive: true });
-    document.addEventListener("touchend", (e) => {
-      if (touchX === null) return;
-      const dx = e.changedTouches[0].clientX - touchX;
-      if (Math.abs(dx) > 50) (dx < 0 ? next() : prev());
-      touchX = null;
-    }, { passive: true });
-
-    render();
   </script>
 </body>
 </html>
