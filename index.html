@@ -5,10 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>AutoStore · Forus S.A. — Pitch (Grupo 12)</title>
 
-<!-- Tipografías: Fraunces (serif editorial, cálida) + Work Sans (humanista). -->
+<!-- Tipografías humanistas y cálidas: Bricolage Grotesque (display) + Work Sans (cuerpo). -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=Work+Sans:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet" />
 
 <style>
   /* ===========================================
@@ -34,7 +34,7 @@
     --stage-bg: #021823;
     --slide-bg: var(--paper);
 
-    --font-display: "Fraunces", Georgia, serif;
+    --font-display: "Bricolage Grotesque", system-ui, sans-serif;
     --font-body: "Work Sans", system-ui, sans-serif;
     --ease: cubic-bezier(0.22, 1, 0.36, 1);
     --pad: 140px;
@@ -68,14 +68,24 @@
   .slide.dark { background: var(--navy); color: var(--cream); }
   .slide.light { background: var(--paper); color: var(--ink); }
 
-  /* Textura de papel muy sutil (puntos), para alejarse del look "plano IA" */
+  /* Textura de madera (anillos) difuminada, dinámica y muy sutil en slides claras */
   .slide.light::before {
-    content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0.5;
-    background-image: radial-gradient(rgba(2, 48, 71, 0.045) 1px, transparent 1px);
-    background-size: 26px 26px;
+    content: ""; position: absolute; inset: -14%; pointer-events: none; z-index: 0;
+    background: url("assets/texture.png") center/cover no-repeat;
+    filter: blur(36px) saturate(1.08);
+    opacity: 0.15;
+    mix-blend-mode: multiply;
+    transform: scale(1.1);
+    animation: woodDrift 48s var(--ease) infinite alternate;
+    will-change: transform;
   }
+  @keyframes woodDrift {
+    from { transform: scale(1.08) translate(-1.5%, -1%) rotate(-1.2deg); }
+    to   { transform: scale(1.28) translate(2.5%, 2%) rotate(1.6deg); }
+  }
+  /* Calidez sutil en slides oscuras (puntos finos) */
   .slide.dark::before {
-    content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0.5;
+    content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0.4;
     background-image: radial-gradient(rgba(142, 202, 230, 0.06) 1px, transparent 1px);
     background-size: 26px 26px;
   }
@@ -109,7 +119,7 @@
   h2.sm { font-size: 80px; }
   .lead { font-family: var(--font-body); font-weight: 400; font-size: 38px; line-height: 1.45; color: var(--ink-soft); max-width: 30ch; margin-top: 32px; }
   .slide.dark .lead { color: var(--cream-soft); }
-  .em { font-family: var(--font-display); font-style: italic; font-weight: 500; }
+  .em { font-family: var(--font-body); font-style: italic; font-weight: 500; letter-spacing: 0; }
   .c-orange { color: var(--orange); }
   .c-blue { color: var(--blue); }
   .c-amber { color: var(--amber); }
@@ -150,6 +160,10 @@
   .logo-chip { display: inline-flex; align-items: center; background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 22px 32px; box-shadow: 0 16px 36px rgba(2, 48, 71, 0.12); margin-top: 40px; }
   .logo-chip img { height: 58px; width: auto; }
 
+  /* Muro de marcas (Forus) */
+  .brandwall { margin-top: 46px; background: #fff; border: 1px solid var(--line); border-radius: 20px; padding: 38px 56px; box-shadow: 0 26px 60px rgba(2, 48, 71, 0.10); }
+  .brandwall img { width: 100%; max-height: 340px; object-fit: contain; display: block; }
+
   /* Sello técnico (Python + Omniverse) */
   .techbar { display: flex; align-items: center; gap: 26px; margin-top: 56px; }
   .techbar .lbl { font-family: var(--font-body); font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; font-size: 18px; color: var(--ink-soft); }
@@ -186,7 +200,7 @@
   body.on-dark #brand { color: var(--cream); }
   body.on-dark #counter { color: var(--cream-soft); }
   .nav { right: 42px; bottom: 64px; display: flex; gap: 12px; }
-  .nav button { width: 52px; height: 52px; border-radius: 50%; border: none; background: var(--navy); color: var(--cream); cursor: pointer; font-size: 22px; transition: background 0.2s, transform 0.1s; }
+  .nav button { width: 54px; height: 46px; border-radius: 10px; border: none; background: var(--navy); color: var(--cream); cursor: pointer; font-size: 22px; transition: background 0.2s, transform 0.1s; }
   .nav button:hover { background: var(--orange); }
   .nav button:active { transform: scale(0.93); }
   #dots { position: fixed; right: 28px; top: 50%; transform: translateY(-50%); z-index: 1000; display: flex; flex-direction: column; gap: 12px; }
@@ -222,7 +236,17 @@
         </div>
       </section>
 
-      <!-- 2 · PROBLEMA -->
+      <!-- 2 · MARCAS (lo que está en juego) -->
+      <section class="slide light">
+        <div class="slide-content">
+          <div class="kicker reveal r1">Lo que está en juego</div>
+          <h2 class="sm reveal r2">Detrás de cada pedido, <span class="em c-orange">una marca</span>.</h2>
+          <p class="lead reveal r3" style="max-width:48ch">Forus distribuye decenas de marcas. Cada ola de pedidos que cruza el AutoStore son entregas que no pueden fallar.</p>
+          <div class="brandwall reveal r4"><img src="assets/brands.png" alt="Marcas que distribuye Forus" /></div>
+        </div>
+      </section>
+
+      <!-- 3 · PROBLEMA -->
       <section class="slide light">
         <div class="slide-content">
           <div class="split">
@@ -326,7 +350,7 @@
   <!-- Chrome -->
   <div id="progress"></div>
   <div class="hud" id="brand">AUTOSTORE<span class="d">·</span>FORUS</div>
-  <div class="hud" id="counter">01 / 07</div>
+  <div class="hud" id="counter">01 / 08</div>
   <div class="hud nav">
     <button id="prev" aria-label="Anterior">‹</button>
     <button id="next" aria-label="Siguiente">›</button>
