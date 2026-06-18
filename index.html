@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>AutoStore · Forus S.A. — Pitch (Grupo 12)</title>
+<title>AutoStore · Forus S.A. · Pitch (Grupo 12)</title>
 
 <!-- Tipografías humanistas y cálidas: Bricolage Grotesque (display) + Work Sans (cuerpo). -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -95,7 +95,8 @@
      =========================================== */
   .cover { background: var(--navy); }
   .cover-bg { position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
-  #bgVideo { position: absolute; top: 50%; left: 50%; width: 1920px; height: 1080px; transform: translate(-50%, -50%) scale(1.18); transform-origin: center; }
+  #bgVideo, #closeVideo { position: absolute; top: 50%; left: 50%; width: 1920px; height: 1080px; transform: translate(-50%, -50%) scale(1.18); transform-origin: center; }
+  .cover-video { position: absolute; top: 50%; left: 50%; width: 1920px; height: 1080px; transform: translate(-50%, -50%) scale(1.18); transform-origin: center; object-fit: cover; }
   #bgPoster { position: absolute; inset: 0; background: var(--navy) center/cover no-repeat; opacity: 0.4; }
   .cover-scrim {
     position: absolute; inset: 0;
@@ -108,16 +109,21 @@
      CONTENIDO
      =========================================== */
   .slide-content { position: relative; z-index: 2; width: 100%; height: 100%; padding: var(--pad); display: flex; flex-direction: column; justify-content: center; }
+  .slide-content.top { justify-content: flex-start; padding-top: 120px; }
+  .slide-content.center { align-items: center; text-align: center; }
+  .slide-content.center h2, .slide-content.center .lead { max-width: none; }
+  .slide-content.center .stats { justify-content: center; width: 100%; }
+  .slide-content.center .statements { align-items: center; text-align: center; }
 
-  .kicker { display: inline-flex; align-items: center; gap: 18px; font-family: var(--font-body); font-weight: 600; letter-spacing: 0.26em; text-transform: uppercase; font-size: 21px; color: var(--orange); margin-bottom: 34px; }
-  .kicker::before { content: ""; width: 46px; height: 2px; background: var(--orange); display: inline-block; }
-  .slide.dark .kicker { color: var(--amber); }
-  .slide.dark .kicker::before { background: var(--amber); }
+  .meta { font-family: var(--font-body); font-weight: 500; font-size: 24px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-soft); margin-top: 40px; }
+  .slide.dark .meta { color: var(--cream-soft); }
 
   h1.title { font-family: var(--font-display); font-weight: 600; font-optical-sizing: auto; font-size: 158px; line-height: 0.98; letter-spacing: -0.015em; }
   h2 { font-family: var(--font-display); font-weight: 600; font-optical-sizing: auto; font-size: 96px; line-height: 1.04; letter-spacing: -0.01em; max-width: 18ch; }
   h2.sm { font-size: 80px; }
-  .lead { font-family: var(--font-body); font-weight: 400; font-size: 38px; line-height: 1.45; color: var(--ink-soft); max-width: 30ch; margin-top: 32px; }
+  h2.xl { font-size: 104px; max-width: 16ch; }
+  .lead { font-family: var(--font-body); font-weight: 400; font-size: 38px; line-height: 1.45; color: var(--ink-soft); max-width: 30ch; margin-top: 28px; }
+  .lead:first-child, h2:first-child, h1:first-child { margin-top: 0; }
   .slide.dark .lead { color: var(--cream-soft); }
   .em { font-family: var(--font-body); font-style: italic; font-weight: 500; letter-spacing: 0; }
   .c-orange { color: var(--orange); }
@@ -152,29 +158,134 @@
   .figure { position: relative; border-radius: 20px; overflow: hidden; background: #fff; border: 1px solid var(--line); box-shadow: 0 40px 90px rgba(2, 48, 71, 0.22); aspect-ratio: 16 / 10; }
   .figure.contain { background: #fff; }
   .figure.contain img { width: 100%; height: 100%; object-fit: contain; padding: 34px; }
+  .figure.contain.blackbox { background: transparent; border: none; box-shadow: 0 36px 80px rgba(2, 48, 71, 0.14); aspect-ratio: 16 / 10; height: auto; max-height: 640px; width: 100%; align-self: center; }
+  .figure.contain.blackbox img { padding: 0; object-fit: contain; }
   .figure.cover img { width: 100%; height: 100%; object-fit: cover; }
+  .figure.demo { aspect-ratio: 4 / 3; box-shadow: 0 48px 100px rgba(2, 48, 71, 0.24); height: auto; max-height: 680px; width: 100%; align-self: center; }
+  .figure.demo img { width: 100%; height: 100%; object-fit: cover; object-position: top center; }
+
+  /* Simulación — imagen como foco */
+  .sim-focus { padding: 64px 88px 72px; justify-content: flex-start; gap: 32px; height: 100%; }
+  .sim-kicker { font-family: var(--font-display); font-weight: 600; font-size: 56px; line-height: 1.06; letter-spacing: -0.01em; text-align: center; width: 100%; max-width: none; flex-shrink: 0; }
+  .figure.sim-hero {
+    flex: 1; width: 100%; min-height: 0; max-height: 900px;
+    aspect-ratio: unset; border-radius: 20px; background: #fff;
+    box-shadow: 0 52px 110px rgba(2, 48, 71, 0.22);
+  }
+  .figure.sim-hero img { width: 100%; height: 100%; object-fit: contain; object-position: center top; padding: 0; }
+
+  /* Dolor — mensaje + evidencia en split */
+  .pain-split { grid-template-columns: 0.92fr 1.08fr; gap: 80px; }
+  .pain-headline { font-family: var(--font-display); font-weight: 600; font-size: 82px; line-height: 1.05; letter-spacing: -0.012em; max-width: 14ch; margin-top: 0; }
+  .pain-stats { display: flex; flex-direction: column; gap: 32px; width: 100%; }
+  .pain-stat {
+    background: var(--orange); color: var(--navy); border-radius: 20px;
+    padding: 44px 48px 42px; box-shadow: 0 28px 64px rgba(251, 133, 0, 0.32);
+    border-left: 8px solid var(--navy);
+  }
+  .pain-metric {
+    font-family: var(--font-display); font-weight: 700; font-size: 118px;
+    line-height: 0.92; letter-spacing: -0.03em; color: var(--navy);
+  }
+  .pain-suffix {
+    font-size: 0.38em; font-weight: 600; letter-spacing: -0.01em; vertical-align: baseline;
+  }
+  .pain-label {
+    font-family: var(--font-body); font-size: 26px; line-height: 1.35; font-weight: 500;
+    color: rgba(2, 48, 71, 0.82); margin-top: 16px; max-width: 22ch;
+  }
+  .pain-kw {
+    font-family: var(--font-display); font-weight: 700; font-size: 1.15em;
+    letter-spacing: 0.04em; text-transform: uppercase; color: var(--navy);
+  }
+
+  /* Dos caminos — split bicolor */
+  .paths-slide::before { content: none; animation: none; }
+  .paths-slide { padding: 0; }
+  .paths { display: grid; grid-template-columns: 1fr 1fr; width: 1920px; height: 1080px; }
+  .paths .path { display: flex; align-items: center; justify-content: center; padding: var(--pad); text-align: center; }
+  .paths .path.left { background: rgba(142, 202, 230, 0.42); color: var(--navy); }
+  .paths .path.right { background: var(--paper-card); color: var(--navy); }
+  .paths h2 { font-size: 92px; max-width: none; text-align: center; line-height: 1.02; }
+  .paths .path.right h2 { color: var(--orange); }
+
+  /* Declaraciones en bloque + transición dramática (slide 5) */
+  .statements { display: flex; flex-direction: column; gap: 14px; max-width: 22ch; }
+  .statements .line { font-family: var(--font-display); font-weight: 600; font-size: 96px; line-height: 1.02; letter-spacing: -0.01em; }
+  .statements .line.accent { color: var(--orange); }
+
+  .drama { display: flex; flex-direction: column; gap: 14px; align-items: center; text-align: center; }
+  .drama-line {
+    font-family: var(--font-display); font-weight: 600; font-size: 96px;
+    line-height: 1.02; letter-spacing: -0.01em; transition: opacity 0.55s var(--ease), transform 0.55s var(--ease), max-height 0.55s var(--ease), margin 0.55s var(--ease);
+  }
+  .drama-line-1 { position: relative; min-height: 1.05em; width: 100%; }
+  .drama-live, .drama-virt {
+    display: block; transition: opacity 0.6s var(--ease), transform 0.6s var(--ease);
+  }
+  .drama-virt {
+    position: absolute; left: 0; right: 0; top: 0;
+    opacity: 0; transform: translateY(18px); pointer-events: none;
+  }
+  .drama-line-3 { color: var(--orange); }
+
+  /* Paso 1: EN VIVO → VIRTUALES + tachado */
+  .drama-step-1 .drama-live,
+  .drama-step-2 .drama-live { opacity: 0; transform: translateY(-18px); }
+  .drama-step-1 .drama-virt,
+  .drama-step-2 .drama-virt { opacity: 1; transform: none; position: relative; pointer-events: auto; }
+  .drama-step-1 .drama-line-2,
+  .drama-step-1 .drama-line-3,
+  .drama-step-2 .drama-line-2,
+  .drama-step-2 .drama-line-3 { position: relative; }
+  .drama-step-1 .drama-line-2::after,
+  .drama-step-1 .drama-line-3::after,
+  .drama-step-2 .drama-line-2::after,
+  .drama-step-2 .drama-line-3::after {
+    content: ""; position: absolute; left: -1%; right: -1%; top: 50%; height: 10px;
+    background: var(--navy); transform: translateY(-50%) scaleX(0); transform-origin: left center;
+    animation: strikeDraw 0.55s var(--ease) 0.15s forwards;
+  }
+
+  /* Paso 2: solo PRUEBAS VIRTUALES */
+  .drama-step-2 .drama-line-1 { font-size: 112px; transition: font-size 0.65s var(--ease); }
+  .drama-step-2 .drama-line-2,
+  .drama-step-2 .drama-line-3 {
+    opacity: 0; max-height: 0; margin: 0; overflow: hidden; pointer-events: none;
+  }
+
+  @keyframes strikeDraw {
+    from { transform: translateY(-50%) scaleX(0); }
+    to   { transform: translateY(-50%) scaleX(1); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .drama-step-1 .drama-line-2::after,
+    .drama-step-1 .drama-line-3::after,
+    .drama-step-2 .drama-line-2::after,
+    .drama-step-2 .drama-line-3::after { animation: none; transform: translateY(-50%) scaleX(1); }
+  }
+
+  /* Ambición — stats en slide claro */
+  .stats.light-stats { gap: 100px; margin-top: 48px; }
+  .stats.light-stats .stat .big { font-size: 148px; }
+  .stats.light-stats .stat:nth-child(1) .big { color: var(--orange); }
+  .stats.light-stats .stat:nth-child(2) .big { color: var(--blue); }
+  .stats.light-stats .stat:nth-child(3) .big { color: var(--amber); }
+  .stats.light-stats .stat .lbl { color: var(--ink-soft); font-weight: 600; font-size: 30px; }
   .cap { font-family: var(--font-display); font-style: italic; font-size: 25px; color: var(--ink-soft); margin-top: 22px; }
   .slide.dark .cap { color: var(--cream-soft); }
 
-  /* Chip de logo (NVIDIA Omniverse) */
-  .logo-chip { display: inline-flex; align-items: center; background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 22px 32px; box-shadow: 0 16px 36px rgba(2, 48, 71, 0.12); margin-top: 40px; }
-  .logo-chip img { height: 58px; width: auto; }
+  /* Chip de logo (NVIDIA Omniverse) — reservado */
 
   /* Muro de marcas (Forus) */
   .brandwall { margin-top: 46px; background: #fff; border: 1px solid var(--line); border-radius: 20px; padding: 38px 56px; box-shadow: 0 26px 60px rgba(2, 48, 71, 0.10); }
   .brandwall img { width: 100%; max-height: 340px; object-fit: contain; display: block; }
 
-  /* Sello técnico (Python + Omniverse) */
-  .techbar { display: flex; align-items: center; gap: 26px; margin-top: 56px; }
-  .techbar .lbl { font-family: var(--font-body); font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; font-size: 18px; color: var(--ink-soft); }
-  .techbar .marks { display: flex; align-items: center; gap: 22px; }
-  .techbar .mark { display: inline-flex; align-items: center; gap: 12px; background: var(--paper-card); border: 1px solid var(--line); border-radius: 12px; padding: 12px 20px; font-family: var(--font-body); font-weight: 500; font-size: 22px; color: var(--navy); }
-  .techbar .mark img { height: 34px; width: auto; }
-  .techbar .mark.om img { height: 26px; }
-
   /* Equipo */
   .team { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 46px; max-width: 1200px; }
   .member { font-family: var(--font-body); font-weight: 500; font-size: 27px; color: var(--navy); background: var(--paper-card); border: 1px solid var(--line); border-radius: 12px; padding: 14px 24px; }
+  .cover .team .member { color: var(--navy); background: rgba(255, 253, 247, 0.94); }
 
   /* ===========================================
      ANIMACIONES DE ENTRADA (suaves)
@@ -222,7 +333,7 @@
   <div class="deck-viewport">
     <main class="deck-stage" id="deckStage">
 
-      <!-- 1 · PORTADA (con video en bucle, sin tags) -->
+      <!-- 1 · PORTADA -->
       <section class="slide cover dark active visible">
         <div class="cover-bg">
           <div id="bgPoster"></div>
@@ -230,116 +341,120 @@
           <div class="cover-scrim"></div>
         </div>
         <div class="slide-content">
-          <div class="kicker reveal r1">Forus S.A. · Grupo 12</div>
-          <h1 class="title reveal r2">AutoStore,<br />sin la <span class="em c-amber">caja negra</span>.</h1>
-          <p class="lead reveal r3" style="max-width:36ch; color:var(--cream-soft)">El gemelo digital que convierte la intuición en evidencia.</p>
+          <h1 class="title reveal r1" style="font-size:132px">AutoStore<br />Simulation</h1>
+          <p class="lead reveal r2" style="max-width:36ch; color:var(--cream-soft); font-size:44px; font-weight:600; letter-spacing:0.04em; margin-top:36px">Forus S.A.</p>
+          <p class="meta reveal r3">Grupo 12</p>
         </div>
       </section>
 
-      <!-- 2 · MARCAS (lo que está en juego) -->
+      <!-- 2 · DOLOR -->
       <section class="slide light">
         <div class="slide-content">
-          <div class="kicker reveal r1">Lo que está en juego</div>
-          <h2 class="sm reveal r2">Detrás de cada pedido, <span class="em c-orange">una marca</span>.</h2>
-          <p class="lead reveal r3" style="max-width:48ch">Forus distribuye decenas de marcas. Cada ola de pedidos que cruza el AutoStore son entregas que no pueden fallar.</p>
-          <div class="brandwall reveal r4"><img src="assets/brands.png" alt="Marcas que distribuye Forus" /></div>
+          <div class="split pain-split">
+            <h2 class="pain-headline reveal r1">Una mala decisión en Forus puede <span class="em c-orange">costar millones</span> y paralizar <span class="em c-orange">cientos de pedidos</span>.</h2>
+            <div class="pain-stats reveal r2">
+              <div class="pain-stat">
+                <div class="pain-metric">30.000<span class="pain-suffix">/día</span></div>
+                <p class="pain-label">Unidades en <span class="pain-kw">Riesgo</span> de paralización</p>
+              </div>
+              <div class="pain-stat">
+                <div class="pain-metric">$1.350<span class="pain-suffix"> millones</span></div>
+                <p class="pain-label">Mercadería <span class="pain-kw">Retenida</span> · cada 24 h de caída</p>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
-      <!-- 3 · PROBLEMA -->
+      <!-- 3 · CAJA NEGRA -->
       <section class="slide light">
         <div class="slide-content">
           <div class="split">
             <div>
-              <div class="kicker reveal r1">El problema</div>
-              <h2 class="reveal r2">Mejorar es, hoy, una <span class="em c-orange">apuesta</span>.</h2>
-              <p class="lead reveal r3">Entra una orden. Sale un resultado.<br />Lo del medio: <span class="hl">invisible</span>.</p>
+              <h2 class="reveal r1">AutoStore es increíble, pero opera como una <span class="em c-orange">caja negra</span>.</h2>
+              <p class="lead reveal r2">Entra una orden. Sale un resultado.<br />Lo del medio: <span class="hl">invisible</span>.</p>
             </div>
-            <div class="reveal r3">
-              <figure class="figure contain"><img class="ken" src="assets/blackbox.png" alt="El AutoStore como caja negra: entrada, proceso oculto y salida" /></figure>
-              <div class="cap">El sistema real no revela su lógica interna.</div>
+            <div class="reveal r2">
+              <figure class="figure contain blackbox"><img src="assets/blackbox.png" alt="Entrada, proceso oculto y salida del AutoStore" /></figure>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- 3 · EL PARCHE DE HOY -->
-      <section class="slide light">
-        <div class="slide-content">
-          <div class="kicker reveal r1">El parche de hoy</div>
-          <h2 class="sm reveal r2">Intuición. Pruebas en vivo. <span class="em c-orange">Dedos cruzados.</span></h2>
-          <div class="cards c3">
-            <div class="card reveal r2"><div class="idx">01</div><h3>Intuición</h3><p>Se decide por experiencia, no por datos.</p></div>
-            <div class="card reveal r3"><div class="idx">02</div><h3>Simulación manual</h3><p>Modelos que no reflejan la realidad.</p></div>
-            <div class="card reveal r4"><div class="idx">03</div><h3>Prueba en producción</h3><p>Cada ensayo arriesga las entregas del día.</p></div>
-          </div>
+      <!-- 4 · DOS CAMINOS -->
+      <section class="slide light paths-slide">
+        <div class="paths">
+          <div class="path left reveal r1"><h2>Dos caminos</h2></div>
+          <div class="path right reveal r2"><h2>Ninguno es<br />el ideal</h2></div>
         </div>
       </section>
 
-      <!-- 4 · SOLUCIÓN -->
-      <section class="slide light">
-        <div class="slide-content">
-          <div class="split media-left">
-            <div class="reveal r2"><figure class="figure cover"><img class="ken" src="assets/robot.png" alt="Robot del sistema AutoStore" /></figure></div>
-            <div>
-              <div class="kicker reveal r1">La solución</div>
-              <h2 class="sm reveal r2">Un AutoStore que puedes <span class="em c-orange">romper sin consecuencias</span>.</h2>
-              <p class="lead reveal r3">Un gemelo digital 3D, <span class="hl">100% aislado</span> de la operación real.</p>
-              <div class="logo-chip reveal r4"><img src="assets/nvidia-omniverse.png" alt="NVIDIA Omniverse" /></div>
+      <!-- 5 · TRANSICIÓN DRAMÁTICA (3 pasos con →) -->
+      <section class="slide light drama-slide">
+        <div class="slide-content center">
+          <div class="drama drama-step-0" id="dramaBeat">
+            <div class="drama-line drama-line-1">
+              <span class="drama-live">Pruebas en vivo.</span>
+              <span class="drama-virt">Pruebas <span class="c-orange">virtuales.</span></span>
             </div>
+            <div class="drama-line drama-line-2">Cruzando los dedos.</div>
+            <div class="drama-line drama-line-3">Perdiendo tiempo valioso.</div>
           </div>
         </div>
       </section>
 
-      <!-- 5 · AMBICIÓN (navy) -->
-      <section class="slide dark">
+      <!-- 6 · SOLUCIÓN (video en bucle, como portada) -->
+      <section class="slide cover solution dark">
+        <div class="cover-bg">
+          <video class="cover-video" id="solutionVideo" autoplay muted loop playsinline>
+            <source src="assets/AutoStoreLOOP.mp4" type="video/mp4" />
+          </video>
+          <div class="cover-scrim"></div>
+        </div>
         <div class="slide-content">
-          <div class="kicker reveal r1">La ambición</div>
-          <h2 class="reveal r2">Cien decisiones. <span class="em c-amber">Cero riesgo</span>.</h2>
-          <div class="stats">
-            <div class="stat reveal r2"><div class="big">100</div><div class="lbl">estrategias<br />que puedes ensayar</div></div>
-            <div class="stat reveal r3"><div class="big">7</div><div class="lbl">KPIs comparados<br />en tiempo real</div></div>
-            <div class="stat reveal r4"><div class="big">0</div><div class="lbl">riesgo sobre la<br />operación real</div></div>
-          </div>
-          <p class="lead reveal r5" style="max-width:42ch">Comparar. Medir. Elegir — <span class="em c-amber">con evidencia</span>.</p>
+          <h2 class="reveal r1" style="max-width:20ch; font-size:88px">Un simulador 3D hecho a la medida para <span class="em c-amber">Forus</span>.</h2>
+          <p class="lead reveal r2" style="max-width:42ch; color:var(--cream-soft)">Replica robots, picking diurno, excavaciones y reposición nocturna, <span class="hl">100% aislado</span> de la operación real.</p>
         </div>
       </section>
 
-      <!-- 6 · EJECUCIÓN -->
+      <!-- 7 · AMBICIÓN -->
       <section class="slide light">
-        <div class="slide-content">
-          <div class="kicker reveal r1">Así de simple</div>
-          <h2 class="reveal r2">Configura · Carga · <span class="em c-orange">Play</span>.</h2>
-          <div class="cards c3">
-            <div class="card reveal r2"><div class="idx">01</div><h3>Configura</h3><p>Las dimensiones de la grilla.</p></div>
-            <div class="card reveal r3"><div class="idx">02</div><h3>Carga</h3><p>La ola de pedidos, en CSV.</p></div>
-            <div class="card reveal r4"><div class="idx">03</div><h3>Play</h3><p>Y llega el reporte comparativo.</p></div>
-          </div>
-          <div class="techbar reveal r5">
-            <span class="lbl">Bajo el capó</span>
-            <div class="marks">
-              <span class="mark"><img src="assets/python.png" alt="Python" /> Python</span>
-              <span class="mark om"><img src="assets/nvidia-omniverse.png" alt="NVIDIA Omniverse" /></span>
-            </div>
+        <div class="slide-content center">
+          <h2 class="sm reveal r1">Optimizar la bodega deja de ser una <span class="em c-orange">apuesta</span>.</h2>
+          <div class="stats light-stats">
+            <div class="stat reveal r2"><div class="big">100</div><div class="lbl">Estrategias</div></div>
+            <div class="stat reveal r3"><div class="big">7</div><div class="lbl">KPIs</div></div>
+            <div class="stat reveal r4"><div class="big">0</div><div class="lbl">Riesgos</div></div>
           </div>
         </div>
       </section>
 
-      <!-- 7 · CIERRE -->
+      <!-- 8 · SIMULACIÓN -->
       <section class="slide light">
+        <div class="slide-content sim-focus">
+          <h2 class="sim-kicker reveal r1">Configura · Carga · <span class="em c-orange">Play</span>.</h2>
+          <figure class="figure sim-hero reveal r2"><img src="assets/simulation.png" alt="Panel de simulación, control de escenarios" /></figure>
+        </div>
+      </section>
+
+      <!-- 9 · CIERRE -->
+      <section class="slide cover dark">
+        <div class="cover-bg">
+          <div id="closeVideo"></div>
+          <div class="cover-scrim"></div>
+        </div>
         <div class="slide-content">
-          <div class="kicker reveal r1">Cierre</div>
-          <h2 class="reveal r2">La pregunta ya no es <span class="em">si</span>.<br />Es <span class="em c-orange">cuándo</span>.</h2>
-          <h1 class="title reveal r3" style="font-size:116px; margin-top:14px; color:var(--navy)">Gracias.</h1>
-          <div class="team reveal r4">
-            <div class="member">Manuel Aguilera</div>
-            <div class="member">Alex Alfaro</div>
+          <h2 class="reveal r1" style="max-width:none; color:var(--cream)">La pregunta ya no es <span class="em">si</span>.<br />Es <span class="em c-amber">cuándo</span>.</h2>
+          <h1 class="title reveal r2" style="font-size:116px; margin-top:14px; color:var(--cream)">Gracias.</h1>
+          <div class="team reveal r3">
             <div class="member">Samira Becerra Saa</div>
-            <div class="member">Alonso Bravo</div>
-            <div class="member">Eliseo Guarda</div>
-            <div class="member">Guadalupe Marín</div>
-            <div class="member">Vicente Rosales</div>
+            <div class="member">Manuel Aguilera</div>
             <div class="member">Martín Vasquez</div>
+            <div class="member">Guadalupe Marín</div>
+            <div class="member">Alonso Bravo</div>
+            <div class="member">Alex Alfaro</div>
+            <div class="member">Vicente Rosales</div>
+            <div class="member">Eliseo Guarda</div>
           </div>
         </div>
       </section>
@@ -350,7 +465,7 @@
   <!-- Chrome -->
   <div id="progress"></div>
   <div class="hud" id="brand">AUTOSTORE<span class="d">·</span>FORUS</div>
-  <div class="hud" id="counter">01 / 08</div>
+  <div class="hud" id="counter">01 / 09</div>
   <div class="hud nav">
     <button id="prev" aria-label="Anterior">‹</button>
     <button id="next" aria-label="Siguiente">›</button>
@@ -362,34 +477,49 @@
   <button class="edit-toggle" id="editToggle" title="Modo edición (E)">✏️</button>
   <div id="editHint">Modo edición: haz clic en cualquier texto. Ctrl+S para descargar.</div>
 
-  <!-- API de YouTube (fondo solo en la portada) -->
+  <!-- API de YouTube (portada + cierre) -->
   <script src="https://www.youtube.com/iframe_api"></script>
   <script>
-    /* === FONDO DE VIDEO EN BUCLE (primeros 19 s) — solo portada === */
+    /* === FONDO DE VIDEO EN BUCLE (YouTube, portada + cierre) === */
     const VIDEO_ID = "67FhJ_u7A8Y";
     const LOOP_END = 19;
     let bgPlayer = null;
+    let closePlayer = null;
 
-    function onYouTubeIframeAPIReady() {
-      bgPlayer = new YT.Player("bgVideo", {
+    function _loopYt(player) {
+      setInterval(() => {
+        try {
+          if (player && player.getCurrentTime && player.getCurrentTime() >= LOOP_END) {
+            player.seekTo(0, true);
+            player.playVideo();
+          }
+        } catch (_) {}
+      }, 200);
+    }
+
+    function _mkYtPlayer(elId) {
+      return new YT.Player(elId, {
         videoId: VIDEO_ID,
         host: "https://www.youtube.com",
-        playerVars: { autoplay: 1, controls: 0, mute: 1, start: 0, end: LOOP_END, loop: 1, playlist: VIDEO_ID, modestbranding: 1, playsinline: 1, rel: 0, fs: 0, disablekb: 1, iv_load_policy: 3, origin: location.origin },
+        playerVars: { autoplay: 0, controls: 0, mute: 1, start: 0, end: LOOP_END, loop: 1, playlist: VIDEO_ID, modestbranding: 1, playsinline: 1, rel: 0, fs: 0, disablekb: 1, iv_load_policy: 3, origin: location.origin },
         events: {
-          onReady: (e) => {
-            e.target.mute(); e.target.playVideo();
-            setInterval(() => { try { if (bgPlayer.getCurrentTime && bgPlayer.getCurrentTime() >= LOOP_END) { bgPlayer.seekTo(0, true); bgPlayer.playVideo(); } } catch (_) {} }, 200);
-          },
+          onReady: (e) => { e.target.mute(); _loopYt(e.target); },
           onStateChange: (e) => { if (e.data === YT.PlayerState.ENDED) { e.target.seekTo(0, true); e.target.playVideo(); } },
-          onError: () => { const f = document.getElementById("bgVideo"); if (f) f.style.display = "none"; }
+          onError: () => { const f = document.getElementById(elId); if (f) f.style.display = "none"; }
         }
       });
+    }
+
+    function onYouTubeIframeAPIReady() {
+      bgPlayer = _mkYtPlayer("bgVideo");
+      closePlayer = _mkYtPlayer("closeVideo");
+      if (deck) deck._manageVideos();
     }
     if (location.protocol === "file:") {
       window.addEventListener("DOMContentLoaded", () => {
         const w = document.createElement("div");
         w.style.cssText = "position:fixed;z-index:99;left:50%;top:14px;transform:translateX(-50%);background:#fb8500;color:#fff;padding:8px 16px;border-radius:999px;font:600 13px/1 sans-serif";
-        w.textContent = "Para ver el video, sirve la página por http://localhost o GitHub Pages.";
+        w.textContent = "Para ver los videos, sirve la página por http://localhost o GitHub Pages.";
         document.body.appendChild(w); setTimeout(() => w.remove(), 8000);
       });
     }
@@ -400,6 +530,9 @@
         this.slides = Array.from(document.querySelectorAll(".slide"));
         this.total = this.slides.length;
         this.current = 0;
+        this.dramaSlideIndex = 4;
+        this.dramaMaxStep = 2;
+        this.dramaStep = 0;
         this.stage = document.getElementById("deckStage");
         this.counter = document.getElementById("counter");
         this.progress = document.getElementById("progress");
@@ -409,6 +542,28 @@
         document.getElementById("next").addEventListener("click", () => this.next());
         document.getElementById("prev").addEventListener("click", () => this.prev());
         this.show(0);
+      }
+      _dramaEl() { return document.getElementById("dramaBeat"); }
+      _setDramaStep(step) {
+        this.dramaStep = step;
+        const el = this._dramaEl();
+        if (el) el.className = "drama drama-step-" + step;
+      }
+      _resetDrama() { this._setDramaStep(0); }
+      _manageVideos() {
+        const solVideo = document.getElementById("solutionVideo");
+        const isCover = this.current === 0;
+        const isSolution = this.current === 5;
+        const isClose = this.current === this.total - 1;
+        if (solVideo) {
+          if (isSolution) solVideo.play().catch(() => {});
+          else { solVideo.pause(); solVideo.currentTime = 0; }
+        }
+        const play = (p) => { try { if (p && p.playVideo) p.playVideo(); } catch (_) {} };
+        const pause = (p) => { try { if (p && p.pauseVideo) p.pauseVideo(); } catch (_) {} };
+        if (isCover) { play(bgPlayer); pause(closePlayer); }
+        else if (isClose) { pause(bgPlayer); play(closePlayer); }
+        else { pause(bgPlayer); pause(closePlayer); }
       }
       _scale() {
         const f = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
@@ -420,15 +575,30 @@
       }
       _pad(n) { return String(n).padStart(2, "0"); }
       show(i) {
+        const prev = this.current;
         this.current = Math.max(0, Math.min(this.total - 1, i));
         this.slides.forEach((s, k) => { const on = k === this.current; s.classList.toggle("active", on); s.classList.toggle("visible", on); });
         this.dots.forEach((d, k) => d.classList.toggle("on", k === this.current));
         document.body.classList.toggle("on-dark", this.slides[this.current].classList.contains("dark"));
         this.counter.textContent = this._pad(this.current + 1) + " / " + this._pad(this.total);
         this.progress.style.width = ((this.current + 1) / this.total * 100) + "%";
+        if (this.current === this.dramaSlideIndex && prev !== this.dramaSlideIndex) this._resetDrama();
+        this._manageVideos();
       }
-      next() { this.show(this.current + 1); }
-      prev() { this.show(this.current - 1); }
+      next() {
+        if (this.current === this.dramaSlideIndex && this.dramaStep < this.dramaMaxStep) {
+          this._setDramaStep(this.dramaStep + 1);
+          return;
+        }
+        this.show(this.current + 1);
+      }
+      prev() {
+        if (this.current === this.dramaSlideIndex && this.dramaStep > 0) {
+          this._setDramaStep(this.dramaStep - 1);
+          return;
+        }
+        this.show(this.current - 1);
+      }
       _keyboard() {
         document.addEventListener("keydown", (e) => {
           if (e.target.getAttribute && e.target.getAttribute("contenteditable") === "true") return;
@@ -454,7 +624,7 @@
     /* === EDICIÓN INLINE (E o esquina sup. izq.; Ctrl+S descarga) === */
     const editor = {
       isActive: false,
-      editable: "h1, h2, p.lead, .card h3, .card p, .stat .lbl, .member, .cap, .kicker, .techbar .lbl",
+      editable: "h1, h2, p.lead, .meta, .card h3, .card p, .stat .lbl, .member, .cap, .pain-metric, .pain-label, .pain-headline, .drama-line, .drama-live, .drama-virt, .paths h2, .sim-kicker",
       restore() { try { const saved = JSON.parse(localStorage.getItem("autostore-pitch-edits") || "{}"); document.querySelectorAll(this.editable).forEach((el, i) => { if (saved[i] != null) el.innerHTML = saved[i]; }); } catch (_) {} },
       save() { const map = {}; document.querySelectorAll(this.editable).forEach((el, i) => { map[i] = el.innerHTML; }); localStorage.setItem("autostore-pitch-edits", JSON.stringify(map)); },
       toggle() {
