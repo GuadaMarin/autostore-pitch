@@ -5,57 +5,50 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>AutoStore · Forus S.A. — Pitch (Grupo 12)</title>
 
-<!-- Tipografías distintivas (Fontshare): Clash Display + Satoshi. Nada de Inter/Arial. -->
-<link rel="preconnect" href="https://api.fontshare.com" crossorigin />
-<link href="https://api.fontshare.com/v2/css?f[]=clash-display@600,700,500,400&f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet" />
+<!-- Tipografías: Fraunces (serif editorial, cálida) + Work Sans (humanista). -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
 
 <style>
   /* ===========================================
-     VARIABLES DE TEMA — "AutoStore Noir"
-     Cambia aquí colores/tipografía de todo el deck.
+     PALETA — Azul de Prusia + ámbar/naranja
+     #8ecae6 cielo · #219ebc azul · #023047 navy
+     #ffb703 ámbar · #fb8500 naranja
      =========================================== */
   :root {
-    --stage-bg: #08090b;
-    --slide-bg: #08090b;
-    --ink: #f4f2ee;
-    --muted: #9aa0a8;
-    --accent: #ff2e2e;        /* rojo AutoStore vivo */
-    --accent-deep: #e4002b;
-    --accent-2: #76b900;      /* verde NVIDIA, uso puntual */
-    --card: rgba(16, 18, 22, 0.52);
-    --stroke: rgba(255, 255, 255, 0.12);
+    --sky: #8ecae6;
+    --blue: #219ebc;
+    --navy: #023047;
+    --amber: #ffb703;
+    --orange: #fb8500;
 
-    --font-display: "Clash Display", sans-serif;
-    --font-body: "Satoshi", sans-serif;
+    --paper: #f7f2e8;        /* crema cálida */
+    --paper-card: #fffdf7;   /* tarjeta */
+    --ink: #1c2b34;          /* texto cuerpo */
+    --ink-soft: #5b6b73;     /* texto secundario */
+    --cream: #f7f2e8;        /* texto sobre navy */
+    --cream-soft: rgba(247, 242, 232, 0.72);
+    --line: rgba(2, 48, 71, 0.14);
 
-    --ease: cubic-bezier(0.16, 1, 0.3, 1);
-    --slide-pad: 132px;
+    --stage-bg: #021823;
+    --slide-bg: var(--paper);
+
+    --font-display: "Fraunces", Georgia, serif;
+    --font-body: "Work Sans", system-ui, sans-serif;
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --pad: 140px;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   /* ===========================================
      FIXED 16:9 STAGE — viewport-base.css (íntegro)
-     Slides autorados a 1920×1080 y escalados como bloque.
      =========================================== */
-  html, body {
-    width: 100%; height: 100%; margin: 0;
-    overflow: hidden; background: var(--stage-bg, #000);
-  }
+  html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background: var(--stage-bg, #000); }
   .deck-viewport { position: fixed; inset: 0; overflow: hidden; background: var(--stage-bg, #000); }
-  .deck-stage {
-    position: absolute; left: 0; top: 0;
-    width: 1920px; height: 1080px;
-    overflow: hidden; transform-origin: 0 0;
-    background: var(--slide-bg, #fff);
-  }
-  .slide {
-    position: absolute; inset: 0;
-    width: 1920px; height: 1080px;
-    overflow: hidden; display: block;
-    visibility: hidden; opacity: 0; pointer-events: none;
-    background: var(--slide-bg, #fff);
-  }
+  .deck-stage { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; overflow: hidden; transform-origin: 0 0; background: var(--slide-bg); }
+  .slide { position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden; display: block; visibility: hidden; opacity: 0; pointer-events: none; background: var(--slide-bg); }
   .slide.active, .slide.visible { visibility: visible; opacity: 1; pointer-events: auto; z-index: 1; }
   img, video, canvas, svg { max-width: 100%; max-height: 100%; }
   .deck-controls { position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%); z-index: 1000; }
@@ -67,187 +60,147 @@
     .slide:last-child { break-after: auto; page-break-after: auto; }
     .deck-controls { display: none !important; }
   }
-  @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.2s !important; }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.2s !important; } }
+
+  /* ===========================================
+     TEMA POR SLIDE
+     =========================================== */
+  .slide.dark { background: var(--navy); color: var(--cream); }
+  .slide.light { background: var(--paper); color: var(--ink); }
+
+  /* Textura de papel muy sutil (puntos), para alejarse del look "plano IA" */
+  .slide.light::before {
+    content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0.5;
+    background-image: radial-gradient(rgba(2, 48, 71, 0.045) 1px, transparent 1px);
+    background-size: 26px 26px;
+  }
+  .slide.dark::before {
+    content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0.5;
+    background-image: radial-gradient(rgba(142, 202, 230, 0.06) 1px, transparent 1px);
+    background-size: 26px 26px;
   }
 
   /* ===========================================
-     FONDO: video en bucle (primeros 19 s) + scrim + grilla
-     Vive DENTRO del stage para escalar en 16:9.
+     PORTADA — único slide con video en bucle
      =========================================== */
-  .slide { background: transparent; }   /* deja ver el fondo del stage */
-  .stage-bg { position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; background: #08090b; }
-  #bgVideo {
-    position: absolute; top: 50%; left: 50%;
-    width: 1920px; height: 1080px;
-    transform: translate(-50%, -50%) scale(1.18);  /* overscan: oculta cualquier borde del player */
-    transform-origin: center;
-  }
-  #bgPoster {
-    position: absolute; inset: 0;
-    background: #08090b center/cover no-repeat url("assets/blackbox.png");
-    opacity: 0.25; filter: grayscale(0.3);
-  }
-  .bg-scrim {
+  .cover { background: var(--navy); }
+  .cover-bg { position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+  #bgVideo { position: absolute; top: 50%; left: 50%; width: 1920px; height: 1080px; transform: translate(-50%, -50%) scale(1.18); transform-origin: center; }
+  #bgPoster { position: absolute; inset: 0; background: var(--navy) center/cover no-repeat; opacity: 0.4; }
+  .cover-scrim {
     position: absolute; inset: 0;
     background:
-      radial-gradient(130% 120% at 82% 8%, rgba(228, 0, 43, 0.20), transparent 46%),
-      radial-gradient(120% 120% at 0% 100%, rgba(118, 185, 0, 0.10), transparent 44%),
-      linear-gradient(180deg, rgba(8, 9, 11, 0.72), rgba(8, 9, 11, 0.90));
-  }
-  .bg-grid {
-    position: absolute; inset: 0; opacity: 0.5;
-    background-image:
-      linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
-    background-size: 96px 96px;
-    -webkit-mask-image: radial-gradient(120% 100% at 50% 50%, #000 55%, transparent 100%);
-            mask-image: radial-gradient(120% 100% at 50% 50%, #000 55%, transparent 100%);
+      linear-gradient(105deg, rgba(2, 24, 35, 0.92) 0%, rgba(2, 24, 35, 0.66) 46%, rgba(2, 24, 35, 0.30) 100%),
+      linear-gradient(0deg, rgba(2, 24, 35, 0.78), rgba(2, 24, 35, 0.10));
   }
 
   /* ===========================================
-     CONTENIDO DE SLIDE
+     CONTENIDO
      =========================================== */
-  .slide-content {
-    position: relative; z-index: 2;
-    width: 100%; height: 100%;
-    padding: var(--slide-pad);
-    display: flex; flex-direction: column; justify-content: center;
-    color: var(--ink);
-  }
+  .slide-content { position: relative; z-index: 2; width: 100%; height: 100%; padding: var(--pad); display: flex; flex-direction: column; justify-content: center; }
 
-  .kicker {
-    display: inline-flex; align-items: center; gap: 16px;
-    font-family: var(--font-body); font-weight: 700;
-    letter-spacing: 0.32em; text-transform: uppercase;
-    font-size: 22px; color: var(--accent); margin-bottom: 30px;
-  }
-  .kicker::before { content: ""; width: 54px; height: 3px; background: var(--accent); display: inline-block; }
+  .kicker { display: inline-flex; align-items: center; gap: 18px; font-family: var(--font-body); font-weight: 600; letter-spacing: 0.26em; text-transform: uppercase; font-size: 21px; color: var(--orange); margin-bottom: 34px; }
+  .kicker::before { content: ""; width: 46px; height: 2px; background: var(--orange); display: inline-block; }
+  .slide.dark .kicker { color: var(--amber); }
+  .slide.dark .kicker::before { background: var(--amber); }
 
-  h1.title {
-    font-family: var(--font-display); font-weight: 700;
-    font-size: 168px; line-height: 0.94; letter-spacing: -0.02em;
-  }
-  h2 {
-    font-family: var(--font-display); font-weight: 700;
-    font-size: 104px; line-height: 1.02; letter-spacing: -0.015em;
-    max-width: 17ch;
-  }
-  h2.sm { font-size: 86px; }
-  .lead {
-    font-family: var(--font-body); font-weight: 400;
-    font-size: 40px; line-height: 1.42; color: var(--muted);
-    max-width: 30ch; margin-top: 34px;
-  }
-  .accent { color: var(--accent); }
-  .accent-2 { color: var(--accent-2); }
-  .hl { color: var(--ink); font-weight: 700; }
-  em { color: var(--ink); font-style: italic; }
+  h1.title { font-family: var(--font-display); font-weight: 600; font-optical-sizing: auto; font-size: 158px; line-height: 0.98; letter-spacing: -0.015em; }
+  h2 { font-family: var(--font-display); font-weight: 600; font-optical-sizing: auto; font-size: 96px; line-height: 1.04; letter-spacing: -0.01em; max-width: 18ch; }
+  h2.sm { font-size: 80px; }
+  .lead { font-family: var(--font-body); font-weight: 400; font-size: 38px; line-height: 1.45; color: var(--ink-soft); max-width: 30ch; margin-top: 32px; }
+  .slide.dark .lead { color: var(--cream-soft); }
+  .em { font-family: var(--font-display); font-style: italic; font-weight: 500; }
+  .c-orange { color: var(--orange); }
+  .c-blue { color: var(--blue); }
+  .c-amber { color: var(--amber); }
+  .hl { color: var(--navy); font-weight: 600; }
+  .slide.dark .hl { color: var(--cream); }
 
-  /* Pills */
-  .pills { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 46px; }
-  .pill {
-    font-family: var(--font-body); font-weight: 500; font-size: 26px;
-    color: var(--muted); border: 1px solid var(--stroke);
-    background: rgba(255, 255, 255, 0.04); padding: 14px 28px; border-radius: 999px;
-  }
-
-  /* Tarjetas */
-  .cards { display: grid; gap: 28px; margin-top: 56px; }
+  /* Tarjetas (sólidas y cálidas; sin glassmorphism) */
+  .cards { display: grid; gap: 30px; margin-top: 58px; }
   .cards.c3 { grid-template-columns: repeat(3, 1fr); }
-  .card {
-    background: var(--card); border: 1px solid var(--stroke);
-    border-radius: 24px; padding: 44px 40px;
-    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-  }
-  .card .idx {
-    font-family: var(--font-display); font-weight: 700; font-size: 40px;
-    color: var(--accent); line-height: 1; margin-bottom: 22px;
-  }
-  .card h3 { font-family: var(--font-display); font-weight: 600; font-size: 38px; margin-bottom: 14px; }
-  .card p { font-family: var(--font-body); font-size: 27px; line-height: 1.4; color: var(--muted); }
+  .card { position: relative; background: var(--paper-card); border: 1px solid var(--line); border-radius: 18px; padding: 46px 42px 44px; box-shadow: 0 26px 60px rgba(2, 48, 71, 0.10); overflow: hidden; }
+  .card::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 6px; }
+  .card:nth-child(1)::before { background: var(--orange); }
+  .card:nth-child(2)::before { background: var(--blue); }
+  .card:nth-child(3)::before { background: var(--amber); }
+  .card .idx { font-family: var(--font-display); font-weight: 600; font-size: 34px; color: var(--ink-soft); line-height: 1; margin-bottom: 24px; }
+  .card h3 { font-family: var(--font-display); font-weight: 600; font-size: 38px; color: var(--navy); margin-bottom: 14px; }
+  .card p { font-family: var(--font-body); font-size: 26px; line-height: 1.45; color: var(--ink-soft); }
 
-  /* Stats grandes */
-  .stats { display: flex; gap: 110px; margin-top: 64px; }
-  .stat .big {
-    font-family: var(--font-display); font-weight: 700; font-size: 168px; line-height: 0.9;
-    background: linear-gradient(180deg, #fff, #b9bec6);
-    -webkit-background-clip: text; background-clip: text; color: transparent;
-  }
-  .stat .big.red { background: linear-gradient(180deg, #ff6a6a, var(--accent-deep)); -webkit-background-clip: text; background-clip: text; color: transparent; }
-  .stat .lbl { font-family: var(--font-body); font-size: 28px; color: var(--muted); margin-top: 14px; line-height: 1.32; }
+  /* Stats grandes (slide navy) */
+  .stats { display: flex; gap: 120px; margin-top: 60px; }
+  .stat .big { font-family: var(--font-display); font-weight: 600; font-size: 172px; line-height: 0.9; }
+  .stat:nth-child(1) .big { color: var(--orange); }
+  .stat:nth-child(2) .big { color: var(--sky); }
+  .stat:nth-child(3) .big { color: var(--amber); }
+  .stat .lbl { font-family: var(--font-body); font-size: 27px; color: var(--cream-soft); margin-top: 18px; line-height: 1.32; }
 
-  /* Layout dos columnas (texto + imagen) */
-  .split { display: grid; grid-template-columns: 1.02fr 0.98fr; gap: 96px; align-items: center; height: 100%; }
-  .split.media-left { grid-template-columns: 0.98fr 1.02fr; }
-  .figure {
-    position: relative; border-radius: 26px; overflow: hidden;
-    border: 1px solid var(--stroke);
-    box-shadow: 0 50px 120px rgba(0, 0, 0, 0.6);
-    aspect-ratio: 16 / 11; background: #eef1f4;
-  }
-  .figure img { width: 100%; height: 100%; object-fit: contain; padding: 22px; }
-  .figure .ken { animation: ken 22s var(--ease) infinite alternate; transform-origin: center; }
-  @keyframes ken { from { transform: scale(1.02); } to { transform: scale(1.12); } }
-  .cap { font-family: var(--font-body); font-style: italic; font-size: 26px; color: var(--muted); margin-top: 22px; }
+  /* Dos columnas texto + imagen */
+  .split { display: grid; grid-template-columns: 1fr 1fr; gap: 100px; align-items: center; height: 100%; }
+  .split.media-left { grid-template-columns: 1fr 1fr; }
+  .figure { position: relative; border-radius: 20px; overflow: hidden; background: #fff; border: 1px solid var(--line); box-shadow: 0 40px 90px rgba(2, 48, 71, 0.22); aspect-ratio: 16 / 10; }
+  .figure.contain { background: #fff; }
+  .figure.contain img { width: 100%; height: 100%; object-fit: contain; padding: 34px; }
+  .figure.cover img { width: 100%; height: 100%; object-fit: cover; }
+  .cap { font-family: var(--font-display); font-style: italic; font-size: 25px; color: var(--ink-soft); margin-top: 22px; }
+  .slide.dark .cap { color: var(--cream-soft); }
+
+  /* Chip de logo (NVIDIA Omniverse) */
+  .logo-chip { display: inline-flex; align-items: center; background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 22px 32px; box-shadow: 0 16px 36px rgba(2, 48, 71, 0.12); margin-top: 40px; }
+  .logo-chip img { height: 58px; width: auto; }
+
+  /* Sello técnico (Python + Omniverse) */
+  .techbar { display: flex; align-items: center; gap: 26px; margin-top: 56px; }
+  .techbar .lbl { font-family: var(--font-body); font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; font-size: 18px; color: var(--ink-soft); }
+  .techbar .marks { display: flex; align-items: center; gap: 22px; }
+  .techbar .mark { display: inline-flex; align-items: center; gap: 12px; background: var(--paper-card); border: 1px solid var(--line); border-radius: 12px; padding: 12px 20px; font-family: var(--font-body); font-weight: 500; font-size: 22px; color: var(--navy); }
+  .techbar .mark img { height: 34px; width: auto; }
+  .techbar .mark.om img { height: 26px; }
 
   /* Equipo */
-  .team { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 44px; max-width: 1180px; }
-  .member {
-    font-family: var(--font-body); font-weight: 500; font-size: 28px;
-    background: var(--card); border: 1px solid var(--stroke);
-    border-radius: 14px; padding: 16px 26px;
-  }
+  .team { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 46px; max-width: 1200px; }
+  .member { font-family: var(--font-body); font-weight: 500; font-size: 27px; color: var(--navy); background: var(--paper-card); border: 1px solid var(--line); border-radius: 12px; padding: 14px 24px; }
 
   /* ===========================================
-     ANIMACIONES DE ENTRADA (reveal escalonado)
+     ANIMACIONES DE ENTRADA (suaves)
      =========================================== */
-  .reveal { opacity: 0; transform: translateY(38px); transition: opacity 0.75s var(--ease), transform 0.75s var(--ease); }
+  .reveal { opacity: 0; transform: translateY(26px); transition: opacity 0.85s var(--ease), transform 0.85s var(--ease); }
   .slide.visible .reveal { opacity: 1; transform: none; }
-  .reveal.blur { filter: blur(12px); transition: opacity 0.8s var(--ease), transform 0.8s var(--ease), filter 0.8s var(--ease); }
-  .slide.visible .reveal.blur { filter: blur(0); }
-  .slide.visible .r1 { transition-delay: 0.06s; }
+  .slide.visible .r1 { transition-delay: 0.05s; }
   .slide.visible .r2 { transition-delay: 0.16s; }
-  .slide.visible .r3 { transition-delay: 0.26s; }
-  .slide.visible .r4 { transition-delay: 0.36s; }
-  .slide.visible .r5 { transition-delay: 0.46s; }
-  .slide.visible .r6 { transition-delay: 0.56s; }
+  .slide.visible .r3 { transition-delay: 0.28s; }
+  .slide.visible .r4 { transition-delay: 0.40s; }
+  .slide.visible .r5 { transition-delay: 0.52s; }
+  .figure img.ken { animation: ken 24s var(--ease) infinite alternate; transform-origin: center; }
+  @keyframes ken { from { transform: scale(1.015); } to { transform: scale(1.08); } }
 
   /* ===========================================
-     CHROME (fuera del stage, no escala)
+     CHROME (fuera del stage)
      =========================================== */
-  #progress { position: fixed; top: 0; left: 0; height: 4px; z-index: 1000; width: 0;
-    background: linear-gradient(90deg, var(--accent), var(--accent-2)); transition: width 0.5s var(--ease); }
-  .hud { position: fixed; z-index: 1000; font-family: var(--font-display); color: var(--ink); }
-  #brand { left: 40px; bottom: 30px; font-weight: 700; letter-spacing: 0.06em; opacity: 0.9; font-size: 18px; }
-  #brand .d { color: var(--accent); }
-  #counter { right: 40px; bottom: 32px; color: var(--muted); font-size: 18px; font-variant-numeric: tabular-nums; }
-  .nav { right: 40px; bottom: 64px; display: flex; gap: 12px; }
-  .nav button {
-    width: 52px; height: 52px; border-radius: 50%; border: 1px solid var(--stroke);
-    background: rgba(16, 18, 22, 0.6); color: var(--ink); cursor: pointer; font-size: 22px;
-    backdrop-filter: blur(8px); transition: background 0.2s, transform 0.1s;
-  }
-  .nav button:hover { background: rgba(228, 0, 43, 0.3); }
+  #progress { position: fixed; top: 0; left: 0; height: 4px; z-index: 1000; width: 0; background: linear-gradient(90deg, var(--amber), var(--orange)); transition: width 0.5s var(--ease); }
+  .hud { position: fixed; z-index: 1000; font-family: var(--font-body); }
+  #brand { left: 42px; bottom: 30px; font-weight: 600; letter-spacing: 0.14em; font-size: 16px; color: var(--navy); }
+  #brand .d { color: var(--orange); }
+  #counter { right: 42px; bottom: 32px; font-size: 17px; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+  body.on-dark #brand { color: var(--cream); }
+  body.on-dark #counter { color: var(--cream-soft); }
+  .nav { right: 42px; bottom: 64px; display: flex; gap: 12px; }
+  .nav button { width: 52px; height: 52px; border-radius: 50%; border: none; background: var(--navy); color: var(--cream); cursor: pointer; font-size: 22px; transition: background 0.2s, transform 0.1s; }
+  .nav button:hover { background: var(--orange); }
   .nav button:active { transform: scale(0.93); }
-  #dots { position: fixed; right: 26px; top: 50%; transform: translateY(-50%); z-index: 1000; display: flex; flex-direction: column; gap: 12px; }
-  #dots button { width: 10px; height: 10px; border-radius: 50%; border: none; background: rgba(255, 255, 255, 0.25); cursor: pointer; padding: 0; transition: all 0.25s; }
-  #dots button.on { background: var(--accent); transform: scale(1.6); }
+  #dots { position: fixed; right: 28px; top: 50%; transform: translateY(-50%); z-index: 1000; display: flex; flex-direction: column; gap: 12px; }
+  #dots button { width: 10px; height: 10px; border-radius: 50%; border: none; background: rgba(2, 48, 71, 0.25); cursor: pointer; padding: 0; transition: all 0.25s; }
+  body.on-dark #dots button { background: rgba(247, 242, 232, 0.3); }
+  #dots button.on { background: var(--orange); transform: scale(1.6); }
 
   /* Edición inline */
   .edit-hotzone { position: fixed; top: 0; left: 0; width: 80px; height: 80px; z-index: 10000; cursor: pointer; }
-  .edit-toggle {
-    position: fixed; top: 18px; left: 18px; z-index: 10001;
-    width: 46px; height: 46px; border-radius: 12px; border: 1px solid var(--stroke);
-    background: rgba(16, 18, 22, 0.85); color: var(--ink); font-size: 18px; cursor: pointer;
-    opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
-  }
+  .edit-toggle { position: fixed; top: 18px; left: 18px; z-index: 10001; width: 46px; height: 46px; border-radius: 12px; border: 1px solid var(--line); background: var(--paper-card); color: var(--navy); font-size: 18px; cursor: pointer; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
   .edit-toggle.show, .edit-toggle.active { opacity: 1; pointer-events: auto; }
-  .edit-toggle.active { background: var(--accent-deep); }
-  body.editing [contenteditable="true"] { outline: 2px dashed rgba(255, 46, 46, 0.6); outline-offset: 6px; border-radius: 6px; }
-  #editHint { position: fixed; top: 20px; left: 78px; z-index: 10001; font-family: var(--font-body); font-size: 14px;
-    color: var(--ink); background: rgba(16,18,22,.85); border: 1px solid var(--stroke); padding: 8px 14px; border-radius: 10px;
-    opacity: 0; pointer-events: none; transition: opacity .3s; }
+  .edit-toggle.active { background: var(--orange); color: #fff; }
+  body.editing [contenteditable="true"] { outline: 2px dashed rgba(251, 133, 0, 0.7); outline-offset: 6px; border-radius: 6px; }
+  #editHint { position: fixed; top: 20px; left: 78px; z-index: 10001; font-family: var(--font-body); font-size: 14px; color: var(--navy); background: var(--paper-card); border: 1px solid var(--line); padding: 8px 14px; border-radius: 10px; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
   #editHint.show { opacity: 1; }
 </style>
 </head>
@@ -255,39 +208,31 @@
   <div class="deck-viewport">
     <main class="deck-stage" id="deckStage">
 
-      <!-- Fondo persistente (video + scrim + grilla) -->
-      <div class="stage-bg">
-        <div id="bgPoster"></div>
-        <div id="bgVideo"></div>
-        <div class="bg-scrim"></div>
-        <div class="bg-grid"></div>
-      </div>
-
-      <!-- 1 · PORTADA -->
-      <section class="slide title-slide active visible">
+      <!-- 1 · PORTADA (con video en bucle, sin tags) -->
+      <section class="slide cover dark active visible">
+        <div class="cover-bg">
+          <div id="bgPoster"></div>
+          <div id="bgVideo"></div>
+          <div class="cover-scrim"></div>
+        </div>
         <div class="slide-content">
-          <div class="kicker reveal r1" contenteditable="false">Forus S.A. · Grupo 12</div>
-          <h1 class="title reveal blur r2">AutoStore,<br />sin la <span class="accent">caja negra</span>.</h1>
-          <p class="lead reveal r3" style="max-width:34ch">El gemelo digital que convierte la intuición en evidencia.</p>
-          <div class="pills reveal r4">
-            <span class="pill">NVIDIA Omniverse</span>
-            <span class="pill">Gemelo digital 3D</span>
-            <span class="pill">7 KPIs</span>
-          </div>
+          <div class="kicker reveal r1">Forus S.A. · Grupo 12</div>
+          <h1 class="title reveal r2">AutoStore,<br />sin la <span class="em c-amber">caja negra</span>.</h1>
+          <p class="lead reveal r3" style="max-width:36ch; color:var(--cream-soft)">El gemelo digital que convierte la intuición en evidencia.</p>
         </div>
       </section>
 
       <!-- 2 · PROBLEMA -->
-      <section class="slide">
+      <section class="slide light">
         <div class="slide-content">
           <div class="split">
             <div>
               <div class="kicker reveal r1">El problema</div>
-              <h2 class="reveal r2">Mejorar es, hoy, una <span class="accent">apuesta</span>.</h2>
+              <h2 class="reveal r2">Mejorar es, hoy, una <span class="em c-orange">apuesta</span>.</h2>
               <p class="lead reveal r3">Entra una orden. Sale un resultado.<br />Lo del medio: <span class="hl">invisible</span>.</p>
             </div>
             <div class="reveal r3">
-              <figure class="figure"><img class="ken" src="assets/blackbox.png" alt="El AutoStore como caja negra: entrada, proceso oculto y salida" /></figure>
+              <figure class="figure contain"><img class="ken" src="assets/blackbox.png" alt="El AutoStore como caja negra: entrada, proceso oculto y salida" /></figure>
               <div class="cap">El sistema real no revela su lógica interna.</div>
             </div>
           </div>
@@ -295,10 +240,10 @@
       </section>
 
       <!-- 3 · EL PARCHE DE HOY -->
-      <section class="slide">
+      <section class="slide light">
         <div class="slide-content">
           <div class="kicker reveal r1">El parche de hoy</div>
-          <h2 class="sm reveal r2">Intuición. Pruebas en vivo. <span class="accent">Dedos cruzados.</span></h2>
+          <h2 class="sm reveal r2">Intuición. Pruebas en vivo. <span class="em c-orange">Dedos cruzados.</span></h2>
           <div class="cards c3">
             <div class="card reveal r2"><div class="idx">01</div><h3>Intuición</h3><p>Se decide por experiencia, no por datos.</p></div>
             <div class="card reveal r3"><div class="idx">02</div><h3>Simulación manual</h3><p>Modelos que no reflejan la realidad.</p></div>
@@ -308,57 +253,60 @@
       </section>
 
       <!-- 4 · SOLUCIÓN -->
-      <section class="slide">
+      <section class="slide light">
         <div class="slide-content">
           <div class="split media-left">
-            <div class="reveal r2"><figure class="figure"><img class="ken" src="assets/robot.png" alt="Robot del sistema AutoStore" /></figure></div>
+            <div class="reveal r2"><figure class="figure cover"><img class="ken" src="assets/robot.png" alt="Robot del sistema AutoStore" /></figure></div>
             <div>
               <div class="kicker reveal r1">La solución</div>
-              <h2 class="sm reveal r2">Un AutoStore que puedes <span class="accent">romper sin consecuencias</span>.</h2>
-              <p class="lead reveal r3">Gemelo digital 3D en NVIDIA Omniverse, <span class="accent-2">100% aislado</span> de la operación real.</p>
-              <div class="pills reveal r4">
-                <span class="pill">Robots</span><span class="pill">Picking diurno</span>
-                <span class="pill">Excavación</span><span class="pill">Reposición nocturna</span>
-              </div>
+              <h2 class="sm reveal r2">Un AutoStore que puedes <span class="em c-orange">romper sin consecuencias</span>.</h2>
+              <p class="lead reveal r3">Un gemelo digital 3D, <span class="hl">100% aislado</span> de la operación real.</p>
+              <div class="logo-chip reveal r4"><img src="assets/nvidia-omniverse.png" alt="NVIDIA Omniverse" /></div>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- 5 · AMBICIÓN -->
-      <section class="slide">
+      <!-- 5 · AMBICIÓN (navy) -->
+      <section class="slide dark">
         <div class="slide-content">
           <div class="kicker reveal r1">La ambición</div>
-          <h2 class="reveal r2">Cien decisiones. <span class="accent-2">Cero riesgo</span>.</h2>
+          <h2 class="reveal r2">Cien decisiones. <span class="em c-amber">Cero riesgo</span>.</h2>
           <div class="stats">
-            <div class="stat reveal r2"><div class="big red">100</div><div class="lbl">estrategias<br />que puedes ensayar</div></div>
+            <div class="stat reveal r2"><div class="big">100</div><div class="lbl">estrategias<br />que puedes ensayar</div></div>
             <div class="stat reveal r3"><div class="big">7</div><div class="lbl">KPIs comparados<br />en tiempo real</div></div>
             <div class="stat reveal r4"><div class="big">0</div><div class="lbl">riesgo sobre la<br />operación real</div></div>
           </div>
-          <p class="lead reveal r5" style="max-width:40ch">Comparar. Medir. Elegir — con evidencia.</p>
+          <p class="lead reveal r5" style="max-width:42ch">Comparar. Medir. Elegir — <span class="em c-amber">con evidencia</span>.</p>
         </div>
       </section>
 
       <!-- 6 · EJECUCIÓN -->
-      <section class="slide">
+      <section class="slide light">
         <div class="slide-content">
           <div class="kicker reveal r1">Así de simple</div>
-          <h2 class="reveal r2">Configura · Carga · <span class="accent">Play</span>.</h2>
+          <h2 class="reveal r2">Configura · Carga · <span class="em c-orange">Play</span>.</h2>
           <div class="cards c3">
             <div class="card reveal r2"><div class="idx">01</div><h3>Configura</h3><p>Las dimensiones de la grilla.</p></div>
             <div class="card reveal r3"><div class="idx">02</div><h3>Carga</h3><p>La ola de pedidos, en CSV.</p></div>
             <div class="card reveal r4"><div class="idx">03</div><h3>Play</h3><p>Y llega el reporte comparativo.</p></div>
           </div>
-          <p class="lead reveal r5" style="max-width:40ch">Sin necesitar saber nada técnico.</p>
+          <div class="techbar reveal r5">
+            <span class="lbl">Bajo el capó</span>
+            <div class="marks">
+              <span class="mark"><img src="assets/python.png" alt="Python" /> Python</span>
+              <span class="mark om"><img src="assets/nvidia-omniverse.png" alt="NVIDIA Omniverse" /></span>
+            </div>
+          </div>
         </div>
       </section>
 
       <!-- 7 · CIERRE -->
-      <section class="slide">
+      <section class="slide light">
         <div class="slide-content">
           <div class="kicker reveal r1">Cierre</div>
-          <h2 class="reveal blur r2">La pregunta ya no es <em>si</em>.<br />Es <span class="accent">cuándo</span>.</h2>
-          <h1 class="title reveal r3" style="font-size:120px;margin-top:10px">Gracias.</h1>
+          <h2 class="reveal r2">La pregunta ya no es <span class="em">si</span>.<br />Es <span class="em c-orange">cuándo</span>.</h2>
+          <h1 class="title reveal r3" style="font-size:116px; margin-top:14px; color:var(--navy)">Gracias.</h1>
           <div class="team reveal r4">
             <div class="member">Manuel Aguilera</div>
             <div class="member">Alex Alfaro</div>
@@ -390,10 +338,10 @@
   <button class="edit-toggle" id="editToggle" title="Modo edición (E)">✏️</button>
   <div id="editHint">Modo edición: haz clic en cualquier texto. Ctrl+S para descargar.</div>
 
-  <!-- API de YouTube para el fondo en bucle -->
+  <!-- API de YouTube (fondo solo en la portada) -->
   <script src="https://www.youtube.com/iframe_api"></script>
   <script>
-    /* === FONDO DE VIDEO EN BUCLE (primeros 19 s) === */
+    /* === FONDO DE VIDEO EN BUCLE (primeros 19 s) — solo portada === */
     const VIDEO_ID = "67FhJ_u7A8Y";
     const LOOP_END = 19;
     let bgPlayer = null;
@@ -402,17 +350,11 @@
       bgPlayer = new YT.Player("bgVideo", {
         videoId: VIDEO_ID,
         host: "https://www.youtube.com",
-        playerVars: {
-          autoplay: 1, controls: 0, mute: 1, start: 0, end: LOOP_END,
-          loop: 1, playlist: VIDEO_ID, modestbranding: 1, playsinline: 1,
-          rel: 0, fs: 0, disablekb: 1, iv_load_policy: 3, origin: location.origin
-        },
+        playerVars: { autoplay: 1, controls: 0, mute: 1, start: 0, end: LOOP_END, loop: 1, playlist: VIDEO_ID, modestbranding: 1, playsinline: 1, rel: 0, fs: 0, disablekb: 1, iv_load_policy: 3, origin: location.origin },
         events: {
           onReady: (e) => {
             e.target.mute(); e.target.playVideo();
-            setInterval(() => {
-              try { if (bgPlayer.getCurrentTime && bgPlayer.getCurrentTime() >= LOOP_END) { bgPlayer.seekTo(0, true); bgPlayer.playVideo(); } } catch (_) {}
-            }, 200);
+            setInterval(() => { try { if (bgPlayer.getCurrentTime && bgPlayer.getCurrentTime() >= LOOP_END) { bgPlayer.seekTo(0, true); bgPlayer.playVideo(); } } catch (_) {} }, 200);
           },
           onStateChange: (e) => { if (e.data === YT.PlayerState.ENDED) { e.target.seekTo(0, true); e.target.playVideo(); } },
           onError: () => { const f = document.getElementById("bgVideo"); if (f) f.style.display = "none"; }
@@ -422,13 +364,13 @@
     if (location.protocol === "file:") {
       window.addEventListener("DOMContentLoaded", () => {
         const w = document.createElement("div");
-        w.style.cssText = "position:fixed;z-index:99;left:50%;top:14px;transform:translateX(-50%);background:rgba(228,0,43,.92);color:#fff;padding:8px 16px;border-radius:999px;font:600 13px/1 sans-serif";
+        w.style.cssText = "position:fixed;z-index:99;left:50%;top:14px;transform:translateX(-50%);background:#fb8500;color:#fff;padding:8px 16px;border-radius:999px;font:600 13px/1 sans-serif";
         w.textContent = "Para ver el video, sirve la página por http://localhost o GitHub Pages.";
         document.body.appendChild(w); setTimeout(() => w.remove(), 8000);
       });
     }
 
-    /* === CONTROLADOR DE PRESENTACIÓN (stage fijo 16:9) === */
+    /* === CONTROLADOR (stage fijo 16:9) === */
     class SlidePresentation {
       constructor() {
         this.slides = Array.from(document.querySelectorAll(".slide"));
@@ -446,24 +388,18 @@
       }
       _scale() {
         const f = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
-        const x = (window.innerWidth - 1920 * f) / 2;
-        const y = (window.innerHeight - 1080 * f) / 2;
-        this.stage.style.transform = `translate(${x}px, ${y}px) scale(${f})`;
+        this.stage.style.transform = `translate(${(window.innerWidth - 1920 * f) / 2}px, ${(window.innerHeight - 1080 * f) / 2}px) scale(${f})`;
       }
       _buildDots() {
         this.dotsWrap = document.getElementById("dots");
-        this.dots = this.slides.map((_, i) => {
-          const b = document.createElement("button");
-          b.setAttribute("aria-label", "Ir a la slide " + (i + 1));
-          b.addEventListener("click", () => this.show(i));
-          this.dotsWrap.appendChild(b); return b;
-        });
+        this.dots = this.slides.map((_, i) => { const b = document.createElement("button"); b.setAttribute("aria-label", "Ir a la slide " + (i + 1)); b.addEventListener("click", () => this.show(i)); this.dotsWrap.appendChild(b); return b; });
       }
       _pad(n) { return String(n).padStart(2, "0"); }
       show(i) {
         this.current = Math.max(0, Math.min(this.total - 1, i));
         this.slides.forEach((s, k) => { const on = k === this.current; s.classList.toggle("active", on); s.classList.toggle("visible", on); });
         this.dots.forEach((d, k) => d.classList.toggle("on", k === this.current));
+        document.body.classList.toggle("on-dark", this.slides[this.current].classList.contains("dark"));
         this.counter.textContent = this._pad(this.current + 1) + " / " + this._pad(this.total);
         this.progress.style.width = ((this.current + 1) / this.total * 100) + "%";
       }
@@ -486,38 +422,23 @@
       }
       _wheel() {
         let lock = false;
-        window.addEventListener("wheel", (e) => {
-          if (document.body.classList.contains("editing")) return;
-          if (lock) return; if (Math.abs(e.deltaY) < 24) return;
-          lock = true; (e.deltaY > 0 ? this.next() : this.prev());
-          setTimeout(() => { lock = false; }, 700);
-        }, { passive: true });
+        window.addEventListener("wheel", (e) => { if (document.body.classList.contains("editing")) return; if (lock) return; if (Math.abs(e.deltaY) < 24) return; lock = true; (e.deltaY > 0 ? this.next() : this.prev()); setTimeout(() => { lock = false; }, 700); }, { passive: true });
       }
     }
     const deck = new SlidePresentation();
 
-    /* === EDICIÓN INLINE (E o esquina superior izq.; Ctrl+S descarga) === */
+    /* === EDICIÓN INLINE (E o esquina sup. izq.; Ctrl+S descarga) === */
     const editor = {
       isActive: false,
-      editable: "h1, h2, p.lead, .card h3, .card p, .stat .lbl, .member, .pill, .cap, .kicker",
-      restore() {
-        try { const saved = JSON.parse(localStorage.getItem("autostore-pitch-edits") || "{}");
-          document.querySelectorAll(this.editable).forEach((el, i) => { if (saved[i] != null) el.innerHTML = saved[i]; });
-        } catch (_) {}
-      },
-      save() {
-        const map = {}; document.querySelectorAll(this.editable).forEach((el, i) => { map[i] = el.innerHTML; });
-        localStorage.setItem("autostore-pitch-edits", JSON.stringify(map));
-      },
+      editable: "h1, h2, p.lead, .card h3, .card p, .stat .lbl, .member, .cap, .kicker, .techbar .lbl",
+      restore() { try { const saved = JSON.parse(localStorage.getItem("autostore-pitch-edits") || "{}"); document.querySelectorAll(this.editable).forEach((el, i) => { if (saved[i] != null) el.innerHTML = saved[i]; }); } catch (_) {} },
+      save() { const map = {}; document.querySelectorAll(this.editable).forEach((el, i) => { map[i] = el.innerHTML; }); localStorage.setItem("autostore-pitch-edits", JSON.stringify(map)); },
       toggle() {
         this.isActive = !this.isActive;
         document.body.classList.toggle("editing", this.isActive);
         document.getElementById("editToggle").classList.toggle("active", this.isActive);
         document.getElementById("editHint").classList.toggle("show", this.isActive);
-        document.querySelectorAll(this.editable).forEach((el) => {
-          el.setAttribute("contenteditable", this.isActive ? "true" : "false");
-          if (this.isActive) el.addEventListener("input", this._onInput);
-        });
+        document.querySelectorAll(this.editable).forEach((el) => { el.setAttribute("contenteditable", this.isActive ? "true" : "false"); if (this.isActive) el.addEventListener("input", this._onInput); });
       },
       _onInput: () => editor.save()
     };
@@ -536,8 +457,7 @@
       if ((e.ctrlKey || e.metaKey) && e.key === "s") {
         e.preventDefault();
         document.querySelectorAll('[contenteditable]').forEach((el) => el.setAttribute("contenteditable", "false"));
-        const html = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
-        const blob = new Blob([html], { type: "text/html" });
+        const blob = new Blob(["<!DOCTYPE html>\n" + document.documentElement.outerHTML], { type: "text/html" });
         const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "autostore-pitch.html"; a.click();
         if (editor.isActive) document.querySelectorAll(editor.editable).forEach((el) => el.setAttribute("contenteditable", "true"));
       }
