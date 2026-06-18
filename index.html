@@ -286,132 +286,83 @@
       </div>
     </section>
 
-    <!-- 2 · El problema -->
+    <!-- 2 · Dolor (20 s) -->
     <section class="slide">
-      <div class="eyebrow">El problema</div>
-      <h2>El AutoStore de Forus opera como una <span class="accent">caja negra</span>.</h2>
-      <p class="lead">Acepta comandos de entrada y salida, pero no expone su lógica interna
-      ni el estado de la grilla en tiempo real. Gestionado por Neogística en su centro de
-      distribución de Santiago, el sistema mueve miles de cajas de marcas como Columbia y
-      Hush Puppies… sin que nadie pueda ver <em>cómo</em> decide.</p>
-      <div class="grid cols-3">
-        <div class="card"><h3 class="accent">Sin visibilidad</h3><p>No se observa cómo las decisiones operacionales afectan el comportamiento del sistema.</p></div>
-        <div class="card"><h3 class="accent">Sin experimentación</h3><p>Imposible probar políticas de picking u ocupación sin intervenir la producción.</p></div>
-        <div class="card"><h3 class="accent">Sin métricas</h3><p>No hay forma de medir el desempeño real sin arriesgar la continuidad del servicio.</p></div>
-      </div>
-    </section>
-
-    <!-- 3 · Por qué importa -->
-    <section class="slide">
-      <div class="eyebrow">Por qué importa</div>
-      <h2>La ocupación de la grilla es una variable <span class="accent-2">crítica</span>.</h2>
-      <p class="lead">A mayor ocupación, menos columnas libres para las
-      <span class="hl">excavaciones</span> en las que el robot retira las cajas que están
-      encima de la caja objetivo. El resultado: más movimientos, más tiempo de ciclo y más
-      bloqueos entre robots.</p>
+      <div class="eyebrow">01 · Dolor · 20 s</div>
+      <h2>Una mala decisión puede costar <span class="accent">millones</span> y paralizar cientos de pedidos.</h2>
+      <p class="lead">El AutoStore de Forus es increíble… pero opera como una
+      <span class="hl">"caja negra"</span>. Para probar cualquier mejora hay que experimentar
+      directamente en la planta, arriesgándose a <span class="accent">detener la operación</span>.</p>
       <div class="stat-row">
-        <div class="stat"><div class="big">2</div><div class="lbl">turnos diarios:<br />picking (día) y reposición (noche)</div></div>
-        <div class="stat"><div class="big">0</div><div class="lbl">acceso a la lógica<br />interna del sistema real</div></div>
-        <div class="stat"><div class="big">100%</div><div class="lbl">del riesgo recae sobre<br />la operación productiva</div></div>
+        <div class="stat"><div class="big">$ millones</div><div class="lbl">en juego ante<br />una mala decisión</div></div>
+        <div class="stat"><div class="big">cientos</div><div class="lbl">de pedidos que se<br />pueden paralizar</div></div>
+        <div class="stat"><div class="big">caja negra</div><div class="lbl">sin visibilidad de<br />su lógica interna</div></div>
       </div>
     </section>
 
-    <!-- 4 · La solución -->
+    <!-- 3 · Analgésico (20 s) -->
     <section class="slide">
-      <div class="eyebrow">La solución</div>
-      <h2>Una simulación funcional que <span class="accent">replica</span> el AutoStore.</h2>
-      <p class="lead">Desarrollada sobre <span class="hl">NVIDIA Omniverse</span> con
-      <span class="hl">Python</span>, reconstruye la grilla 3D, la dinámica de los robots y
-      el ciclo completo día/noche. Permite a investigadores y especialistas en logística
-      evaluar y comparar escenarios con datos cuantificables, <span class="accent-2">sin
-      interferir con el sistema real</span>.</p>
-      <ul class="clean">
-        <li>Grilla 3D configurable en dimensiones y ocupación inicial <span>(vigas, pilares, cajas).</span></li>
-        <li>Mecánica de robots: desplazamiento, recuperación, excavación y resolución de tráfico.</li>
-        <li>Políticas de picking intercambiables y ciclo de reposición nocturno.</li>
-        <li>Al menos <span class="hl">2 demostradores</span> comparables bajo configuraciones distintas.</li>
-      </ul>
-    </section>
-
-    <!-- 5 · Cómo funciona -->
-    <section class="slide">
-      <div class="eyebrow">Cómo funciona</div>
-      <h2>Del pedido al puerto de salida, paso a paso.</h2>
-      <div class="grid cols-4">
-        <div class="card"><div class="num">01</div><h3>Ola de pedidos</h3><p>Llegan órdenes de picking durante el turno diurno.</p></div>
-        <div class="card"><div class="num">02</div><h3>Excavación</h3><p>El robot retira las cajas superiores para alcanzar la caja objetivo.</p></div>
-        <div class="card"><div class="num">03</div><h3>Transporte</h3><p>Lleva la caja al puerto de salida para la estación de empaque.</p></div>
-        <div class="card"><div class="num">04</div><h3>Reposición</h3><p>De noche, los robots reubican nuevo stock y cambian la ocupación.</p></div>
-      </div>
-      <p class="lead">Cada decisión modifica la ocupación de la grilla y condiciona la
-      siguiente ola de picking — exactamente el comportamiento que el cliente no podía medir.</p>
-    </section>
-
-    <!-- 6 · Arquitectura -->
-    <section class="slide">
-      <div class="eyebrow">Arquitectura</div>
-      <h2>Tres módulos desacoplados sobre un <span class="accent-2">Bus de Estado Central</span>.</h2>
-      <div class="flow">
-        <div class="node card"><div class="num" style="color:var(--accent)">M1</div><h3>UI / Configuración</h3><p>Selector de turno y política, controles play/pausa/velocidad y panel de KPIs en vivo.</p></div>
-        <div class="arrow">→</div>
-        <div class="node card"><div class="num" style="color:var(--accent)">M2</div><h3>Motor de Simulación</h3><p>Python puro: grilla 3D, despachador, picking, reposición, colisiones, excavación y KPIs.</p></div>
-        <div class="arrow">→</div>
-        <div class="node card"><div class="num" style="color:var(--accent)">M3</div><h3>Visualización 3D</h3><p>Omniverse / USD: renderizado y animación. No toma decisiones lógicas.</p></div>
-      </div>
-      <div class="bus">Bus de Estado Central · single-writer / multi-reader · el motor matemático es agnóstico al render (resiste fallos de VRAM)</div>
-    </section>
-
-    <!-- 7 · KPIs -->
-    <section class="slide">
-      <div class="eyebrow">Lo que medimos</div>
-      <h2>Siete <span class="accent">KPIs</span> para decidir con datos.</h2>
-      <div class="grid cols-4">
-        <div class="card kpi"><div class="num">01</div><h3>Satisfacción de pedidos</h3><p>Tasa de pedidos completados.</p></div>
-        <div class="card kpi"><div class="num">02</div><h3>Tiempo de ciclo</h3><p>Promedio por pedido.</p></div>
-        <div class="card kpi"><div class="num">03</div><h3>Movimientos de robots</h3><p>Total de desplazamientos.</p></div>
-        <div class="card kpi"><div class="num">04</div><h3>Índice de ocupación</h3><p>Uso de la grilla.</p></div>
-        <div class="card kpi"><div class="num">05</div><h3>Throughput de recuperación</h3><p>Cajas extraídas por tiempo.</p></div>
-        <div class="card kpi"><div class="num">06</div><h3>Throughput de ingreso</h3><p>Reposición por tiempo.</p></div>
-        <div class="card kpi"><div class="num">07</div><h3>Tiempo de bloqueo</h3><p>Robots detenidos por tráfico.</p></div>
-        <div class="card" style="display:flex;align-items:center;justify-content:center;border-style:dashed;"><p style="text-align:center;color:var(--accent-2);font-weight:600;">Comparables entre escenarios con Δ%</p></div>
-      </div>
-    </section>
-
-    <!-- 8 · Alcance y validación -->
-    <section class="slide">
-      <div class="eyebrow">Alcance y validación</div>
-      <h2>Ingeniería rigurosa, no solo una demo.</h2>
-      <div class="stat-row">
-        <div class="stat"><div class="big">10</div><div class="lbl">requerimientos<br />funcionales</div></div>
-        <div class="stat"><div class="big">10</div><div class="lbl">requerimientos<br />no funcionales</div></div>
-        <div class="stat"><div class="big">10</div><div class="lbl">casos de prueba<br />funcionales</div></div>
-        <div class="stat"><div class="big">100%</div><div class="lbl">cobertura de las<br />funciones principales</div></div>
-      </div>
-      <p class="lead">Ciclo de vida <span class="hl">incremental</span>: el 62,5 % de las tareas
-      del motor son independientes de Omniverse, reduciendo a cero el riesgo de bloqueo por la
-      configuración del entorno 3D en las etapas iniciales.</p>
-    </section>
-
-    <!-- 9 · Impacto -->
-    <section class="slide">
-      <div class="eyebrow">El impacto</div>
-      <h2>Decisiones logísticas basadas en <span class="accent-2">datos</span>, sin riesgo.</h2>
-      <p class="lead">El producto entrega demostradores funcionales que permiten experimentar
-      con políticas de picking y niveles de ocupación, y proyecta una herramienta científica
-      válida para probar a futuro <span class="hl">algoritmos externos de optimización</span>.</p>
+      <div class="eyebrow">02 · Analgésico · 20 s</div>
+      <h2>¿Cómo lo resuelven hoy? <span class="accent">A ciegas.</span></h2>
       <div class="grid cols-3">
-        <div class="card"><h3 class="accent-2">Sin interferencia</h3><p>Se experimenta en el gemelo digital, nunca sobre la operación productiva.</p></div>
-        <div class="card"><h3 class="accent-2">Comparable</h3><p>Escenarios contrastables mediante KPIs cuantificables y reproducibles.</p></div>
-        <div class="card"><h3 class="accent-2">Extensible</h3><p>Base para futuras políticas y optimización algorítmica.</p></div>
+        <div class="card"><h3 class="accent">Intuición</h3><p>Confían ciegamente en la experiencia de los operadores.</p></div>
+        <div class="card"><h3 class="accent">Simulaciones manuales</h3><p>Que no reflejan la realidad de la operación.</p></div>
+        <div class="card"><h3 class="accent">Pruebas en vivo</h3><p>Cruzando los dedos para que nada falle.</p></div>
+      </div>
+      <p class="lead">El costo: pierden <span class="hl">tiempo valioso</span> y ponen en riesgo
+      las <span class="hl">entregas del día</span>.</p>
+    </section>
+
+    <!-- 4 · Solución (30 s) -->
+    <section class="slide">
+      <div class="eyebrow">03 · Solución · 30 s</div>
+      <h2>El primer simulador visual <span class="accent">3D</span> a la medida de Forus, en NVIDIA Omniverse.</h2>
+      <p class="lead">Nuestra plataforma replica con precisión el comportamiento real del AutoStore
+      y entrega un <span class="accent-2">entorno 100% independiente y seguro</span> para
+      experimentar — sin tocar una sola caja de la operación real.</p>
+      <div class="grid cols-4">
+        <div class="card"><h3>Robots</h3><p>Movimiento preciso sobre la grilla.</p></div>
+        <div class="card"><h3>Picking diurno</h3><p>Recuperación de cajas por ola de pedidos.</p></div>
+        <div class="card"><h3>Excavaciones</h3><p>Retiro de cajas superiores hasta la objetivo.</p></div>
+        <div class="card"><h3>Reposición nocturna</h3><p>Reubicación del stock y cambio de ocupación.</p></div>
       </div>
     </section>
 
-    <!-- 10 · Equipo y cierre -->
+    <!-- 5 · Ambición (20 s) -->
     <section class="slide">
-      <div class="eyebrow">Grupo 12 · Junio 2026</div>
-      <h1>Gracias.</h1>
-      <p class="lead">Simulación AutoStore — Forus S.A. · Taller de Ingeniería de Software.<br />
-      Profesores guía: Felipe Muñoz y José Ceroni.</p>
+      <div class="eyebrow">04 · Ambición · 20 s</div>
+      <h2>Que optimizar la bodega deje de ser <span class="accent">una apuesta</span>.</h2>
+      <p class="lead">Con este <span class="hl">gemelo digital</span> pueden correr cien estrategias
+      distintas, verlas en pantalla y comparar resultados. Sin suposiciones, sin intuición:
+      <span class="accent-2">datos concretos</span> sobre qué funciona mejor y por qué.</p>
+      <div class="stat-row">
+        <div class="stat"><div class="big">100</div><div class="lbl">estrategias distintas<br />que puedes ensayar</div></div>
+        <div class="stat"><div class="big">7</div><div class="lbl">KPIs comparados<br />en tiempo real</div></div>
+        <div class="stat"><div class="big">0</div><div class="lbl">riesgo sobre la<br />operación real</div></div>
+      </div>
+    </section>
+
+    <!-- 6 · Ejecución (20 s) -->
+    <section class="slide">
+      <div class="eyebrow">05 · Ejecución · 20 s</div>
+      <h2>Usarlo es así de directo.</h2>
+      <div class="grid cols-3">
+        <div class="card"><div class="num">01</div><h3>Configura la grilla</h3><p>Define las dimensiones del almacén.</p></div>
+        <div class="card"><div class="num">02</div><h3>Carga la ola</h3><p>Sube los pedidos del día en un archivo CSV.</p></div>
+        <div class="card"><div class="num">03</div><h3>Dale Play</h3><p>El simulador corre y genera un reporte comparativo.</p></div>
+      </div>
+      <p class="lead">Al terminar tienes un <span class="hl">reporte listo para decidir</span>.
+      Sin complicaciones y <span class="accent-2">sin necesitar saber nada técnico</span>.</p>
+    </section>
+
+    <!-- 7 · Cierre (10 s) -->
+    <section class="slide">
+      <div class="eyebrow">06 · Cierre · 10 s</div>
+      <h2>La pregunta no es <em>si</em> Forus lo necesita, sino <span class="accent">cuándo</span> dan el siguiente paso.</h2>
+      <p class="lead">Cada día sin esto es un día decidiendo a ciegas y arriesgando la operación
+      para probar algo que pudo ensayarse sin costo y sin riesgo.
+      <span class="hl">Nosotros ya la construimos.</span></p>
+      <h1 style="margin-top:14px">Gracias.</h1>
       <div class="team">
         <div class="member">Manuel Aguilera</div>
         <div class="member">Alex Alfaro</div>
@@ -433,7 +384,7 @@
       <button id="prev" aria-label="Anterior">‹</button>
       <button id="next" aria-label="Siguiente">›</button>
     </div>
-    <div id="counter">01 / 10</div>
+    <div id="counter">01 / 07</div>
   </div>
   <div id="dots"></div>
 
