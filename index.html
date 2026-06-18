@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Pitch · Simulación AutoStore — Forus S.A. (Grupo 12)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #0a0c10;
+    --ink: #f5f7fa;
+    --muted: #aeb6c2;
+    --accent: #e4002b;       /* rojo AutoStore */
+    --accent-2: #76b900;     /* verde NVIDIA */
+    --glass: rgba(20, 24, 32, 0.55);
+    --stroke: rgba(255, 255, 255, 0.12);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    height: 100%;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Inter", system-ui, sans-serif;
+    overflow: hidden;
+  }
+
+  /* ---------- Fondo de video en bucle (primeros 19 s) ---------- */
+  #bgVideoWrap {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    z-index: 0;
+    pointer-events: none;
+  }
+  #bgVideo {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100vw;
+    height: 56.25vw;      /* 16:9 */
+    min-height: 100vh;
+    min-width: 177.78vh;  /* 16:9 */
+  }
+  /* Imagen de respaldo: se ve siempre detrás del video (y si el embed falla). */
+  #bgPoster {
+    position: absolute;
+    inset: 0;
+    background: #000 center/cover no-repeat
+      url("https://i.ytimg.com/vi/67FhJ_u7A8Y/maxresdefault.jpg");
+    filter: saturate(1.05);
+  }
+  #overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    background:
+      radial-gradient(120% 120% at 80% 10%, rgba(228,0,43,0.18), transparent 45%),
+      radial-gradient(120% 120% at 0% 100%, rgba(118,185,0,0.14), transparent 45%),
+      linear-gradient(180deg, rgba(8,10,14,0.72), rgba(8,10,14,0.88));
+  }
+
+  /* ---------- Estructura de slides ---------- */
+  #deck { position: fixed; inset: 0; z-index: 2; }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    padding: clamp(28px, 6vw, 110px);
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity .55s ease, transform .55s ease;
+  }
+  .slide.active { display: flex; opacity: 1; transform: translateY(0); }
+
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: "Space Grotesk", sans-serif;
+    font-weight: 600;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    font-size: clamp(11px, 1.1vw, 14px);
+    color: var(--accent);
+    margin-bottom: 18px;
+  }
+  .eyebrow::before {
+    content: "";
+    width: 34px; height: 2px;
+    background: var(--accent);
+    display: inline-block;
+  }
+
+  h1 {
+    font-family: "Space Grotesk", sans-serif;
+    font-weight: 700;
+    font-size: clamp(36px, 7vw, 92px);
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+  }
+  h2 {
+    font-family: "Space Grotesk", sans-serif;
+    font-weight: 700;
+    font-size: clamp(28px, 4.6vw, 60px);
+    line-height: 1.06;
+    letter-spacing: -0.01em;
+    max-width: 18ch;
+  }
+  .lead {
+    margin-top: 22px;
+    font-size: clamp(16px, 1.8vw, 24px);
+    color: var(--muted);
+    max-width: 60ch;
+    line-height: 1.5;
+  }
+  .accent { color: var(--accent); }
+  .accent-2 { color: var(--accent-2); }
+  .hl { color: var(--ink); font-weight: 600; }
+
+  /* tarjetas */
+  .grid { display: grid; gap: 16px; margin-top: 34px; }
+  .grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
+  .grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+  .grid.cols-4 { grid-template-columns: repeat(4, 1fr); }
+
+  .card {
+    background: var(--glass);
+    border: 1px solid var(--stroke);
+    border-radius: 16px;
+    padding: clamp(16px, 1.8vw, 26px);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+  .card .num {
+    font-family: "Space Grotesk", sans-serif;
+    font-weight: 700;
+    font-size: clamp(26px, 3vw, 40px);
+    color: var(--accent-2);
+    line-height: 1;
+  }
+  .card h3 {
+    font-family: "Space Grotesk", sans-serif;
+    font-size: clamp(15px, 1.5vw, 20px);
+    margin-bottom: 6px;
+  }
+  .card p { color: var(--muted); font-size: clamp(13px, 1.2vw, 16px); line-height: 1.45; }
+
+  .kpi .num { color: var(--accent); }
+
+  ul.clean { list-style: none; margin-top: 26px; display: grid; gap: 14px; max-width: 70ch; }
+  ul.clean li {
+    position: relative;
+    padding-left: 30px;
+    font-size: clamp(15px, 1.6vw, 21px);
+    color: var(--ink);
+    line-height: 1.4;
+  }
+  ul.clean li span { color: var(--muted); }
+  ul.clean li::before {
+    content: "";
+    position: absolute; left: 0; top: .55em;
+    width: 12px; height: 12px;
+    border-radius: 3px;
+    background: var(--accent);
+    box-shadow: 0 0 0 4px rgba(228,0,43,0.15);
+  }
+
+  .stat-row { display: flex; flex-wrap: wrap; gap: clamp(24px, 5vw, 80px); margin-top: 40px; }
+  .stat .big {
+    font-family: "Space Grotesk", sans-serif;
+    font-weight: 700;
+    font-size: clamp(38px, 6vw, 78px);
+    line-height: 1;
+    background: linear-gradient(180deg, #fff, #9aa3b2);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .stat .lbl { color: var(--muted); margin-top: 8px; font-size: clamp(13px, 1.2vw, 17px); }
+
+  .pill {
+    display: inline-block;
+    border: 1px solid var(--stroke);
+    background: rgba(255,255,255,0.05);
+    padding: 7px 14px; border-radius: 999px;
+    font-size: clamp(12px, 1.1vw, 15px);
+    color: var(--muted);
+    margin: 6px 8px 0 0;
+  }
+
+  .team { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; max-width: 70ch; }
+  .team .member {
+    background: var(--glass);
+    border: 1px solid var(--stroke);
+    border-radius: 12px;
+    padding: 12px 18px;
+    font-weight: 500;
+    font-size: clamp(14px, 1.3vw, 18px);
+  }
+
+  .cover-meta { margin-top: 40px; display: flex; flex-wrap: wrap; gap: 10px; }
+
+  /* flujo arquitectura */
+  .flow { display: flex; align-items: stretch; gap: 14px; margin-top: 34px; flex-wrap: wrap; }
+  .flow .node { flex: 1 1 200px; }
+  .flow .arrow { display: flex; align-items: center; color: var(--accent); font-size: 28px; }
+  .bus {
+    margin-top: 16px; text-align: center; padding: 14px;
+    border: 1px dashed rgba(118,185,0,0.5);
+    border-radius: 14px; color: var(--accent-2);
+    font-family: "Space Grotesk", sans-serif; font-weight: 600;
+    background: rgba(118,185,0,0.06);
+  }
+
+  /* ---------- HUD: progreso, contador, navegación ---------- */
+  #progress {
+    position: fixed; top: 0; left: 0; height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    z-index: 5; width: 0; transition: width .4s ease;
+  }
+  #hud {
+    position: fixed; bottom: 22px; left: 0; right: 0;
+    z-index: 5; display: flex; align-items: center; justify-content: space-between;
+    padding: 0 clamp(20px, 5vw, 70px);
+    pointer-events: none;
+    font-family: "Space Grotesk", sans-serif;
+  }
+  #brand { font-weight: 700; letter-spacing: .04em; color: var(--ink); opacity: .9; }
+  #brand .dot { color: var(--accent); }
+  #counter { color: var(--muted); font-variant-numeric: tabular-nums; }
+  .nav-btns { pointer-events: auto; display: flex; gap: 10px; }
+  .nav-btns button {
+    width: 42px; height: 42px; border-radius: 50%;
+    border: 1px solid var(--stroke);
+    background: var(--glass); color: var(--ink);
+    cursor: pointer; font-size: 18px;
+    backdrop-filter: blur(6px); transition: background .2s, transform .1s;
+  }
+  .nav-btns button:hover { background: rgba(228,0,43,0.25); }
+  .nav-btns button:active { transform: scale(.94); }
+
+  #dots { position: fixed; right: 18px; top: 50%; transform: translateY(-50%); z-index: 5; display: flex; flex-direction: column; gap: 10px; }
+  #dots button { width: 9px; height: 9px; border-radius: 50%; border: none; background: rgba(255,255,255,0.25); cursor: pointer; padding: 0; transition: all .25s; }
+  #dots button.on { background: var(--accent); transform: scale(1.5); }
+
+  .hint { position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%); z-index: 5; color: var(--muted); font-size: 12px; opacity: .7; }
+
+  @media (max-width: 760px) {
+    .grid.cols-2, .grid.cols-3, .grid.cols-4 { grid-template-columns: 1fr; }
+    .flow .arrow { transform: rotate(90deg); }
+    #dots { display: none; }
+  }
+</style>
+</head>
+<body>
+  <!-- Fondo de video en bucle (primeros 19 segundos) -->
+  <div id="bgVideoWrap">
+    <div id="bgPoster"></div>
+    <div id="bgVideo"></div>
+  </div>
+  <div id="overlay"></div>
+
+  <div id="progress"></div>
+
+  <main id="deck">
+
+    <!-- 1 · Portada -->
+    <section class="slide active">
+      <div class="eyebrow">Taller de Ingeniería de Software · Grupo 12</div>
+      <h1>Simulación <span class="accent">AutoStore</span><br />para Forus S.A.</h1>
+      <p class="lead">Un gemelo digital que abre la “caja negra” de la logística automatizada:
+      experimenta con políticas de <span class="hl">picking</span> y niveles de
+      <span class="hl">ocupación</span> sin tocar la operación real.</p>
+      <div class="cover-meta">
+        <span class="pill">NVIDIA Omniverse</span>
+        <span class="pill">Python 3.10+</span>
+        <span class="pill">Gemelo digital</span>
+        <span class="pill">7 KPIs</span>
+        <span class="pill">Junio 2026</span>
+      </div>
+    </section>
+
+    <!-- 2 · El problema -->
+    <section class="slide">
+      <div class="eyebrow">El problema</div>
+      <h2>El AutoStore de Forus opera como una <span class="accent">caja negra</span>.</h2>
+      <p class="lead">Acepta comandos de entrada y salida, pero no expone su lógica interna
+      ni el estado de la grilla en tiempo real. Gestionado por Neogística en su centro de
+      distribución de Santiago, el sistema mueve miles de cajas de marcas como Columbia y
+      Hush Puppies… sin que nadie pueda ver <em>cómo</em> decide.</p>
+      <div class="grid cols-3">
+        <div class="card"><h3 class="accent">Sin visibilidad</h3><p>No se observa cómo las decisiones operacionales afectan el comportamiento del sistema.</p></div>
+        <div class="card"><h3 class="accent">Sin experimentación</h3><p>Imposible probar políticas de picking u ocupación sin intervenir la producción.</p></div>
+        <div class="card"><h3 class="accent">Sin métricas</h3><p>No hay forma de medir el desempeño real sin arriesgar la continuidad del servicio.</p></div>
+      </div>
+    </section>
+
+    <!-- 3 · Por qué importa -->
+    <section class="slide">
+      <div class="eyebrow">Por qué importa</div>
+      <h2>La ocupación de la grilla es una variable <span class="accent-2">crítica</span>.</h2>
+      <p class="lead">A mayor ocupación, menos columnas libres para las
+      <span class="hl">excavaciones</span> en las que el robot retira las cajas que están
+      encima de la caja objetivo. El resultado: más movimientos, más tiempo de ciclo y más
+      bloqueos entre robots.</p>
+      <div class="stat-row">
+        <div class="stat"><div class="big">2</div><div class="lbl">turnos diarios:<br />picking (día) y reposición (noche)</div></div>
+        <div class="stat"><div class="big">0</div><div class="lbl">acceso a la lógica<br />interna del sistema real</div></div>
+        <div class="stat"><div class="big">100%</div><div class="lbl">del riesgo recae sobre<br />la operación productiva</div></div>
+      </div>
+    </section>
+
+    <!-- 4 · La solución -->
+    <section class="slide">
+      <div class="eyebrow">La solución</div>
+      <h2>Una simulación funcional que <span class="accent">replica</span> el AutoStore.</h2>
+      <p class="lead">Desarrollada sobre <span class="hl">NVIDIA Omniverse</span> con
+      <span class="hl">Python</span>, reconstruye la grilla 3D, la dinámica de los robots y
+      el ciclo completo día/noche. Permite a investigadores y especialistas en logística
+      evaluar y comparar escenarios con datos cuantificables, <span class="accent-2">sin
+      interferir con el sistema real</span>.</p>
+      <ul class="clean">
+        <li>Grilla 3D configurable en dimensiones y ocupación inicial <span>(vigas, pilares, cajas).</span></li>
+        <li>Mecánica de robots: desplazamiento, recuperación, excavación y resolución de tráfico.</li>
+        <li>Políticas de picking intercambiables y ciclo de reposición nocturno.</li>
+        <li>Al menos <span class="hl">2 demostradores</span> comparables bajo configuraciones distintas.</li>
+      </ul>
+    </section>
+
+    <!-- 5 · Cómo funciona -->
+    <section class="slide">
+      <div class="eyebrow">Cómo funciona</div>
+      <h2>Del pedido al puerto de salida, paso a paso.</h2>
+      <div class="grid cols-4">
+        <div class="card"><div class="num">01</div><h3>Ola de pedidos</h3><p>Llegan órdenes de picking durante el turno diurno.</p></div>
+        <div class="card"><div class="num">02</div><h3>Excavación</h3><p>El robot retira las cajas superiores para alcanzar la caja objetivo.</p></div>
+        <div class="card"><div class="num">03</div><h3>Transporte</h3><p>Lleva la caja al puerto de salida para la estación de empaque.</p></div>
+        <div class="card"><div class="num">04</div><h3>Reposición</h3><p>De noche, los robots reubican nuevo stock y cambian la ocupación.</p></div>
+      </div>
+      <p class="lead">Cada decisión modifica la ocupación de la grilla y condiciona la
+      siguiente ola de picking — exactamente el comportamiento que el cliente no podía medir.</p>
+    </section>
+
+    <!-- 6 · Arquitectura -->
+    <section class="slide">
+      <div class="eyebrow">Arquitectura</div>
+      <h2>Tres módulos desacoplados sobre un <span class="accent-2">Bus de Estado Central</span>.</h2>
+      <div class="flow">
+        <div class="node card"><div class="num" style="color:var(--accent)">M1</div><h3>UI / Configuración</h3><p>Selector de turno y política, controles play/pausa/velocidad y panel de KPIs en vivo.</p></div>
+        <div class="arrow">→</div>
+        <div class="node card"><div class="num" style="color:var(--accent)">M2</div><h3>Motor de Simulación</h3><p>Python puro: grilla 3D, despachador, picking, reposición, colisiones, excavación y KPIs.</p></div>
+        <div class="arrow">→</div>
+        <div class="node card"><div class="num" style="color:var(--accent)">M3</div><h3>Visualización 3D</h3><p>Omniverse / USD: renderizado y animación. No toma decisiones lógicas.</p></div>
+      </div>
+      <div class="bus">Bus de Estado Central · single-writer / multi-reader · el motor matemático es agnóstico al render (resiste fallos de VRAM)</div>
+    </section>
+
+    <!-- 7 · KPIs -->
+    <section class="slide">
+      <div class="eyebrow">Lo que medimos</div>
+      <h2>Siete <span class="accent">KPIs</span> para decidir con datos.</h2>
+      <div class="grid cols-4">
+        <div class="card kpi"><div class="num">01</div><h3>Satisfacción de pedidos</h3><p>Tasa de pedidos completados.</p></div>
+        <div class="card kpi"><div class="num">02</div><h3>Tiempo de ciclo</h3><p>Promedio por pedido.</p></div>
+        <div class="card kpi"><div class="num">03</div><h3>Movimientos de robots</h3><p>Total de desplazamientos.</p></div>
+        <div class="card kpi"><div class="num">04</div><h3>Índice de ocupación</h3><p>Uso de la grilla.</p></div>
+        <div class="card kpi"><div class="num">05</div><h3>Throughput de recuperación</h3><p>Cajas extraídas por tiempo.</p></div>
+        <div class="card kpi"><div class="num">06</div><h3>Throughput de ingreso</h3><p>Reposición por tiempo.</p></div>
+        <div class="card kpi"><div class="num">07</div><h3>Tiempo de bloqueo</h3><p>Robots detenidos por tráfico.</p></div>
+        <div class="card" style="display:flex;align-items:center;justify-content:center;border-style:dashed;"><p style="text-align:center;color:var(--accent-2);font-weight:600;">Comparables entre escenarios con Δ%</p></div>
+      </div>
+    </section>
+
+    <!-- 8 · Alcance y validación -->
+    <section class="slide">
+      <div class="eyebrow">Alcance y validación</div>
+      <h2>Ingeniería rigurosa, no solo una demo.</h2>
+      <div class="stat-row">
+        <div class="stat"><div class="big">10</div><div class="lbl">requerimientos<br />funcionales</div></div>
+        <div class="stat"><div class="big">10</div><div class="lbl">requerimientos<br />no funcionales</div></div>
+        <div class="stat"><div class="big">10</div><div class="lbl">casos de prueba<br />funcionales</div></div>
+        <div class="stat"><div class="big">100%</div><div class="lbl">cobertura de las<br />funciones principales</div></div>
+      </div>
+      <p class="lead">Ciclo de vida <span class="hl">incremental</span>: el 62,5 % de las tareas
+      del motor son independientes de Omniverse, reduciendo a cero el riesgo de bloqueo por la
+      configuración del entorno 3D en las etapas iniciales.</p>
+    </section>
+
+    <!-- 9 · Impacto -->
+    <section class="slide">
+      <div class="eyebrow">El impacto</div>
+      <h2>Decisiones logísticas basadas en <span class="accent-2">datos</span>, sin riesgo.</h2>
+      <p class="lead">El producto entrega demostradores funcionales que permiten experimentar
+      con políticas de picking y niveles de ocupación, y proyecta una herramienta científica
+      válida para probar a futuro <span class="hl">algoritmos externos de optimización</span>.</p>
+      <div class="grid cols-3">
+        <div class="card"><h3 class="accent-2">Sin interferencia</h3><p>Se experimenta en el gemelo digital, nunca sobre la operación productiva.</p></div>
+        <div class="card"><h3 class="accent-2">Comparable</h3><p>Escenarios contrastables mediante KPIs cuantificables y reproducibles.</p></div>
+        <div class="card"><h3 class="accent-2">Extensible</h3><p>Base para futuras políticas y optimización algorítmica.</p></div>
+      </div>
+    </section>
+
+    <!-- 10 · Equipo y cierre -->
+    <section class="slide">
+      <div class="eyebrow">Grupo 12 · Junio 2026</div>
+      <h1>Gracias.</h1>
+      <p class="lead">Simulación AutoStore — Forus S.A. · Taller de Ingeniería de Software.<br />
+      Profesores guía: Felipe Muñoz y José Ceroni.</p>
+      <div class="team">
+        <div class="member">Manuel Aguilera</div>
+        <div class="member">Alex Alfaro</div>
+        <div class="member">Samira Becerra Saa</div>
+        <div class="member">Alonso Bravo</div>
+        <div class="member">Eliseo Guarda</div>
+        <div class="member">Guadalupe Marín</div>
+        <div class="member">Vicente Rosales</div>
+        <div class="member">Martín Vasquez</div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- HUD -->
+  <div id="hud">
+    <div id="brand">AUTOSTORE<span class="dot">·</span>FORUS</div>
+    <div class="nav-btns">
+      <button id="prev" aria-label="Anterior">‹</button>
+      <button id="next" aria-label="Siguiente">›</button>
+    </div>
+    <div id="counter">01 / 10</div>
+  </div>
+  <div id="dots"></div>
+
+  <!-- API de YouTube para el fondo en bucle -->
+  <script src="https://www.youtube.com/iframe_api"></script>
+  <script>
+    /* ====================== Fondo de video en bucle ====================== */
+    const VIDEO_ID = "67FhJ_u7A8Y";
+    const LOOP_END = 19;        // segundos: se reinicia al llegar a este punto
+    let bgPlayer = null;
+
+    function onYouTubeIframeAPIReady() {
+      bgPlayer = new YT.Player("bgVideo", {
+        videoId: VIDEO_ID,
+        host: "https://www.youtube.com",
+        playerVars: {
+          autoplay: 1, controls: 0, mute: 1,
+          start: 0, end: LOOP_END,
+          loop: 1, playlist: VIDEO_ID,
+          modestbranding: 1, playsinline: 1,
+          rel: 0, fs: 0, disablekb: 1, iv_load_policy: 3,
+          origin: location.origin
+        },
+        events: {
+          onReady: (e) => {
+            e.target.mute();
+            e.target.playVideo();
+            // Reinicio robusto del segmento (no dependemos solo de end/loop).
+            setInterval(() => {
+              try {
+                const t = bgPlayer.getCurrentTime ? bgPlayer.getCurrentTime() : 0;
+                if (t >= LOOP_END) { bgPlayer.seekTo(0, true); bgPlayer.playVideo(); }
+              } catch (_) {}
+            }, 200);
+          },
+          onStateChange: (e) => {
+            if (e.data === YT.PlayerState.ENDED) {
+              e.target.seekTo(0, true);
+              e.target.playVideo();
+            }
+          },
+          onError: () => {
+            // Si el embed falla, queda visible la imagen de respaldo (#bgPoster).
+            const f = document.getElementById("bgVideo");
+            if (f) f.style.display = "none";
+          }
+        }
+      });
+    }
+
+    // Aviso si se abre como archivo local (file://): el embed de YouTube se
+    // bloquea por origen nulo. Se debe servir por http://localhost.
+    if (location.protocol === "file:") {
+      window.addEventListener("DOMContentLoaded", () => {
+        const w = document.createElement("div");
+        w.style.cssText = "position:fixed;z-index:9;left:50%;top:14px;transform:translateX(-50%);" +
+          "background:rgba(228,0,43,.92);color:#fff;padding:8px 16px;border-radius:999px;" +
+          "font:600 13px/1 Inter,sans-serif;box-shadow:0 6px 24px rgba(0,0,0,.4)";
+        w.textContent = "Para ver el video, abre la presentación vía servidor local (ver README).";
+        document.body.appendChild(w);
+        setTimeout(() => w.remove(), 8000);
+      });
+    }
+
+    /* ====================== Navegación de slides ====================== */
+    const slides = Array.from(document.querySelectorAll(".slide"));
+    const total = slides.length;
+    let current = 0;
+
+    const counter = document.getElementById("counter");
+    const progress = document.getElementById("progress");
+    const dotsWrap = document.getElementById("dots");
+
+    slides.forEach((_, i) => {
+      const b = document.createElement("button");
+      b.setAttribute("aria-label", "Ir a la slide " + (i + 1));
+      b.addEventListener("click", () => go(i));
+      dotsWrap.appendChild(b);
+    });
+    const dots = Array.from(dotsWrap.children);
+
+    function pad(n) { return String(n).padStart(2, "0"); }
+
+    function render() {
+      slides.forEach((s, i) => s.classList.toggle("active", i === current));
+      dots.forEach((d, i) => d.classList.toggle("on", i === current));
+      counter.textContent = pad(current + 1) + " / " + pad(total);
+      progress.style.width = ((current + 1) / total * 100) + "%";
+    }
+
+    function go(i) { current = Math.max(0, Math.min(total - 1, i)); render(); }
+    function next() { go(current + 1); }
+    function prev() { go(current - 1); }
+
+    document.getElementById("next").addEventListener("click", next);
+    document.getElementById("prev").addEventListener("click", prev);
+
+    document.addEventListener("keydown", (e) => {
+      if (["ArrowRight", "PageDown", " "].includes(e.key)) { e.preventDefault(); next(); }
+      else if (["ArrowLeft", "PageUp"].includes(e.key)) { e.preventDefault(); prev(); }
+      else if (e.key === "Home") go(0);
+      else if (e.key === "End") go(total - 1);
+      else if (e.key === "f" || e.key === "F") {
+        if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+        else document.exitFullscreen();
+      }
+    });
+
+    // Soporte táctil (deslizar).
+    let touchX = null;
+    document.addEventListener("touchstart", (e) => { touchX = e.changedTouches[0].clientX; }, { passive: true });
+    document.addEventListener("touchend", (e) => {
+      if (touchX === null) return;
+      const dx = e.changedTouches[0].clientX - touchX;
+      if (Math.abs(dx) > 50) (dx < 0 ? next() : prev());
+      touchX = null;
+    }, { passive: true });
+
+    render();
+  </script>
+</body>
+</html>
